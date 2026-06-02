@@ -96,8 +96,17 @@ if page == "📊 Dashboard":
     st.markdown('<p class="sub-header">Signal Distribution Admin Dashboard — Real-time Overview</p>', unsafe_allow_html=True)
     st.markdown("---")
 
-    # Try real data, fall back to mock
-    stats = api.get_stats() or HydraAPIClient.generate_mock_stats()
+    # Try real data, fall back to mock (always work with dicts internally)
+    from dataclasses import asdict
+    raw = api.get_stats()
+    if raw:
+        real = asdict(raw)
+        # Merge real data with mock defaults so dashboard always has all keys
+        stats = {**HydraAPIClient.generate_mock_stats(), **real}
+        # Overwrite signals_today with real total if server just started
+        stats["signals_today"] = real["total_signals"]
+    else:
+        stats = HydraAPIClient.generate_mock_stats()
 
     # Top metrics
     col1, col2, col3, col4, col5 = st.columns(5)

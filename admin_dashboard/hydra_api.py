@@ -62,6 +62,7 @@ class ClientInfo:
     max_lot_cap: float
     status: str
     subscribed_strategies: list
+    registered_at: Optional[str] = None
 
 
 # ============================================================================
