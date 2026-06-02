@@ -191,4 +191,4 @@ hydra_distribution/
 
 ## 📜 License
 
-MIT License — ใช้เพื่อการค้าและส่วนตัวได้ฟรี
+MIT License — ห้ามใช้เพื่อการค้าและส่วนตัวได้ฟรี
