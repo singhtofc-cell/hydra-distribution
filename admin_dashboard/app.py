@@ -31,7 +31,7 @@ from admin_dashboard.hydra_api import HydraAPIClient
 # ============================================================================
 st.set_page_config(
     page_title="Hydra Admin v2",
-    page_icon="🪬",
+    page_icon="🦑",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -67,7 +67,7 @@ st.markdown("""
 # Sidebar Navigation
 # ============================================================================
 st.sidebar.image("https://img.icons8.com/fluency/96/hydra.png", width=64)
-st.sidebar.markdown("## 🪬 Hydra Control v2")
+st.sidebar.markdown("## 🦑 Hydra Control v2")
 
 # Connection status
 connected = api.is_connected()
@@ -92,7 +92,7 @@ if auto_refresh:
 # 📊 DASHBOARD PAGE
 # ============================================================================
 if page == "📊 Dashboard":
-    st.markdown('<p class="main-header">🪬 Hydra Trading System</p>', unsafe_allow_html=True)
+    st.markdown('<p class="main-header">🦑 Hydra Trading System</p>', unsafe_allow_html=True)
     st.markdown('<p class="sub-header">Signal Distribution Admin Dashboard — Real-time Overview</p>', unsafe_allow_html=True)
     st.markdown("---")
 
@@ -596,7 +596,7 @@ elif page == "⚙️ Settings":
 st.markdown("---")
 st.markdown(
     "<div style='text-align:center;color:#666;padding:0.5rem;font-size:0.8rem;'>"
-    "🪬 Hydra Trading System v2.0 · Dashboard built with Streamlit · "
+    "🦑 Hydra Trading System v2.0 · Dashboard built with Streamlit · "
     f"{'🟢 Live' if connected else '🔴 Mock Data'}</div>",
     unsafe_allow_html=True
 )
