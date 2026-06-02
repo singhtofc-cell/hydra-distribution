@@ -39,7 +39,8 @@
 || HydraMaster EA | 1 | 217 | MQL5 |
 || HydraCopy EA | 1 | 450 | MQL5 |
 || EA Utilities | 1 | 172 | MQL5 |
-|| **Total** | **146** | **~3,891** | |
+|| Compile Scripts (bat/ps1) | 2 | ~100+ | Batch/PowerShell |
+|| **Total** | **148** | **~3,991** | |
     40|
     41|## 🏗️ สถาปัตยกรรมระบบ
     42|
