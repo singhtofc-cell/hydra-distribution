@@ -1,0 +1,16 @@
+# Hydra Trading System — Git Ignore
+__pycache__/
+*.py[cod]
+*.egg-info/
+.env
+bot_token.txt
+*.ex5
+*.ex4
+*.log
+*.pid
+.run/
+.venv/
+venv/
+*.db
+*.sqlite
+.DS_Store

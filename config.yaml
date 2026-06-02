@@ -1,0 +1,61 @@
+# ============================================================================
+# Hydra Trading System — Signal Distribution Configuration
+# ============================================================================
+# Renamed from HERMES → Hydra for standalone copy-trade distribution system
+
+system:
+  name: "Hydra Trading System"
+  version: "1.0.0"
+  description: "Copy Trade / Signal Distribution system for Exness client VPS + MT5 accounts"
+
+server:
+  host: "0.0.0.0"
+  port: 8788
+  workers: 2
+  debug: false
+
+master:
+  source: "HERMES"  # Source strategy that feeds signals into Hydra
+  default_magic: 20260527
+  default_comment_prefix: "HYDRA"
+
+telegram:
+  bot_token: "YOUR_TELEGRAM_BOT_TOKEN"  # Set via env: HYDRA_TELEGRAM_BOT_TOKEN
+  admin_chat_id: 0                       # Set via env: HYDRA_ADMIN_CHAT_ID
+  signal_channel_id: 0                   # Optional dedicated channel
+  polling_interval_seconds: 30
+
+database:
+  url: "postgresql://hydra:hydra_pass@localhost:5432/hydra_trading"
+  pool_size: 5
+  max_retries: 3
+
+clients:
+  default_risk_percent: 1.0
+  default_max_lot_cap: 5.0
+  max_clients_per_group: 100
+  usc_lot_multiplier: 100.0    # Master 0.01 → Slave 1.00 lot for Cent accounts
+  usd_lot_multiplier: 1.0      # Standard multiplier for USD accounts
+
+risk:
+  max_daily_loss_percent: 5.0
+  max_drawdown_percent: 15.0
+  enable_news_filter: true
+  max_slippage_points: 30
+
+reporting:
+  hourly_enabled: true
+  daily_enabled: true
+  weekly_enabled: true
+  admin_summary_enabled: true
+  report_interval_minutes: 60
+
+signal:
+  default_expiry_minutes: 30
+  max_expiry_minutes: 1440
+  max_lot_cap: 5.0
+  max_priority: "EMERGENCY"
+  supported_strategies:
+    - "SMC_GRID"
+    - "JUDAS_SWING"
+    - "ICT_SMC"

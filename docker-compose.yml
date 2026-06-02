@@ -1,0 +1,102 @@
+# ============================================================================
+# Hydra Trading System — Docker Compose
+# ============================================================================
+# Renamed from HERMES → Hydra for standalone copy-trade distribution system
+
+version: "3.8"
+
+services:
+  hydra-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: hydra-api
+    env_file: .env
+    ports:
+      - "8788:8788"
+    depends_on:
+      hydra-db:
+        condition: service_healthy
+    volumes:
+      - ./config.yaml:/app/config.yaml:ro
+    restart: unless-stopped
+    networks:
+      - hydra-net
+
+  hydra-bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: hydra-bot
+    env_file: .env
+    command: python -m backend.telegram_bot
+    depends_on:
+      hydra-db:
+        condition: service_healthy
+    volumes:
+      - ./config.yaml:/app/config.yaml:ro
+    restart: unless-stopped
+    networks:
+      - hydra-net
+
+  hydra-scheduler:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: hydra-scheduler
+    env_file: .env
+    command: python -m backend.report_scheduler
+    depends_on:
+      hydra-db:
+        condition: service_healthy
+    volumes:
+      - ./config.yaml:/app/config.yaml:ro
+    restart: unless-stopped
+    networks:
+      - hydra-net
+
+  hydra-db:
+    image: postgres:16-alpine
+    container_name: hydra-db
+    environment:
+      POSTGRES_USER: hydra
+      POSTGRES_PASSWORD: hydra_pass
+      POSTGRES_DB: hydra_trading
+    ports:
+      - "5433:5432"
+    volumes:
+      - hydra-postgres-data:/var/lib/postgresql/data
+      - ./backend/database/schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hydra -d hydra_trading"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - hydra-net
+
+  hydra-dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: hydra-dashboard
+    env_file: .env
+    command: streamlit run admin_dashboard/app.py --server.port 8501 --server.address 0.0.0.0
+    ports:
+      - "8501:8501"
+    depends_on:
+      hydra-db:
+        condition: service_healthy
+    volumes:
+      - ./config.yaml:/app/config.yaml:ro
+    restart: unless-stopped
+    networks:
+      - hydra-net
+
+volumes:
+  hydra-postgres-data:
+
+networks:
+  hydra-net:
+    driver: bridge
