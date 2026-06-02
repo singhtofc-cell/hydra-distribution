@@ -22,7 +22,7 @@
     22|| Total MQL5 LOC | 172 |
     23|| Total SQL Files | 2 |
     24|| Total Project Files | 19 |
-    25|| Total Project LOC | ~1,830 |
+    25|| Total Project LOC | ~3,891 |
     26|| Development Status | 🟢 Phase 1-5 Complete |
     27|
     28|## 🏗️ Architecture

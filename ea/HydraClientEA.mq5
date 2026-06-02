@@ -1,7 +1,7 @@
 //+------------------------------------------------------------------+
 //|                                               HydraClientEA.mq5  |
-//|                                          Hydra Trading System v3.0|
-//|                         Client EA with Telegram Chat Integration |
+//|                                          Hydra Trading System v3.10|
+//|                         Client EA with Manual Trade Detection + Telegram |
 //+------------------------------------------------------------------+
 // Renamed from HERMES → Hydra for standalone copy-trade distribution
 // Source: Qwen Architecture Proposal 2026-06-02 — Client EA + Telegram
@@ -12,8 +12,8 @@
 // No VPS needed — runs on the same machine as Telegram.
 //+------------------------------------------------------------------+
 #property copyright "Hydra Trading System"
-#property version   "3.00"
-#property description "ระบบ Copy Trade อัตโนมัติ พร้อมตั้งค่าผ่าน Telegram"
+#property version   "3.10"
+#property description "ระบบ Copy Trade อัตโนมัติ พร้อมตรวจจับ Manual Trade และตั้งค่าผ่าน Telegram"
 #property strict
 #include <Trade\Trade.mqh>
 #include <Trade\SymbolInfo.mqh>
@@ -46,6 +46,7 @@ input int      InpPollInterval     = 5;            // Poll interval (seconds)
 input group "=== 🛡️ Safety ==="
 input bool     InpRequireConfirmation = true;      // Require confirmation before trade
 input double   InpMinMarginLevel   = 200.0;        // Min Margin Level (%)
+input bool     InpAllowManualTrades = false;       // อนุญาตให้เปิดเองโดยไม่แจ้งเตือน
 
 //+------------------------------------------------------------------+
 //| GLOBAL VARIABLES                                                  |
@@ -83,6 +84,10 @@ int            signal_count = 0;
 double         current_risk_percent = 1.0;
 bool           trading_enabled = true;
 
+// 🚨 Manual Trade Detection
+ulong          warned_manual_tickets[];
+int            warned_ticket_count = 0;
+
 //+------------------------------------------------------------------+
 //| INITIALIZATION                                                   |
 //+------------------------------------------------------------------+
@@ -99,7 +104,7 @@ int OnInit() {
    daily_reset_time = TimeCurrent();
    current_risk_percent = InpRiskPerTrade;
 
-   Print("🤖 Hydra Client EA v3.0 initialized");
+   Print("🤖 Hydra Client EA v3.10 initialized");
    Print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
    Print("💰 Account: ", accountInfo.Login());
    Print("💵 Balance: ", accountInfo.Balance(), " ", accountInfo.Currency());
@@ -127,6 +132,9 @@ void OnDeinit(const int reason) {
 //| MAIN TICK                                                        |
 //+------------------------------------------------------------------+
 void OnTick() {
+   // 1. 🚨 ตรวจจับการเทรดด้วยตนเอง (Manual Trade) เป็นอันดับแรก
+   if(!InpAllowManualTrades) { CheckAndWarnManualTrades(); }
+
    CheckDailyReset();
    if(!CheckRiskLimits()) return;
    if(InpAutoTrade && trading_enabled) ProcessSignalQueue();
@@ -492,6 +500,96 @@ int CountOpenPositions() {
 
 void ManageOpenPositions() {
    // Trailing stop, partial close — extend per strategy
+}
+
+//+------------------------------------------------------------------+
+//| 🚨 MANUAL TRADE DETECTION & WARNING SYSTEM                       |
+//| Source: Qwen Article 2026-06-02                                   |
+//+------------------------------------------------------------------+
+void CheckAndWarnManualTrades() {
+   // วนตรวจสอบทุก Position ในพอร์ต
+   for(int i = PositionsTotal() - 1; i >= 0; i--) {
+      ulong ticket = PositionGetTicket(i);
+      if(ticket == 0) continue;
+
+      long   pos_magic  = PositionGetInteger(POSITION_MAGIC);
+      string pos_symbol = PositionGetString(POSITION_SYMBOL);
+      string pos_comment= PositionGetString(POSITION_COMMENT);
+      long   pos_type   = PositionGetInteger(POSITION_TYPE);
+      double pos_lot    = PositionGetDouble(POSITION_VOLUME);
+
+      // เงื่อนไขการตรวจจับออเดอร์นอกระบบ (Manual หรือ EA อื่น):
+      // 1. Magic Number ไม่ตรงกับ Hydra
+      // 2. หรือ Comment ไม่ขึ้นต้นด้วย "HYDRA_"
+      bool is_manual_trade = false;
+
+      if(pos_magic != InpMagicNumber) {
+         is_manual_trade = true;
+      } else if(StringFind(pos_comment, "HYDRA_") != 0) {
+         is_manual_trade = true;
+      }
+
+      // ถ้าเจอออเดอร์นอกระบบ และยังไม่เคยแจ้งเตือน Ticket นี้
+      if(is_manual_trade) {
+         if(!IsTicketAlreadyWarned(ticket)) {
+            SendManualTradeTelegramWarning(ticket, pos_symbol, pos_type, pos_lot, pos_comment);
+            AddWarnedTicket(ticket);
+         }
+      }
+   }
+}
+
+// ตรวจสอบว่าแจ้งเตือน Ticket นี้ไปหรือยัง
+bool IsTicketAlreadyWarned(ulong ticket) {
+   for(int i = 0; i < warned_ticket_count; i++) {
+      if(warned_manual_tickets[i] == ticket) return true;
+   }
+   return false;
+}
+
+// บันทึก Ticket ที่แจ้งเตือนแล้ว
+void AddWarnedTicket(ulong ticket) {
+   warned_ticket_count++;
+   ArrayResize(warned_manual_tickets, warned_ticket_count);
+   warned_manual_tickets[warned_ticket_count - 1] = ticket;
+   Print("⚠️ Manual trade detected and warned: Ticket #", ticket);
+}
+
+// ฟังก์ชันส่งข้อความเตือนไป Telegram (สวยงามและเด่นชัด)
+void SendManualTradeTelegramWarning(ulong ticket, string symbol, long type, double lot, string comment) {
+   string type_str = (type == POSITION_TYPE_BUY) ? "🟢 BUY" : "🔴 SELL";
+
+   // ข้อความเตือนพิเศษตามที่คุณกำหนด
+   string warning_msg = "🚨 <b>คำเตือน: ตรวจจับการเทรดด้วยตนเอง (Manual Trade)</b> 🚨\n\n";
+   warning_msg += "⚠️ <i>การเทรดแบบนอกเหนือความเสี่ยงที่ออกแบบมาจากระบบ ";
+   warning_msg += "อาจส่งผลให้การเทรดด้วยระบบคำนวณผิดพลาด นำมาสู่การสูญเสีย ";
+   warning_msg += "ระบบไม่สามารถปรับตัวเข้ากับการตัดสินใจของคุณเองได้</i>\n\n";
+
+   warning_msg += "━━━━━━━━━━━━━━━━━━━━\n";
+   warning_msg += "📊 <b>รายละเอียดออเดอร์ที่ตรวจจับได้:</b>\n";
+   warning_msg += "🎫 Ticket: <code>" + IntegerToString(ticket) + "</code>\n";
+   warning_msg += "📈 Symbol: " + symbol + "\n";
+   warning_msg += "🎯 Direction: " + type_str + "\n";
+   warning_msg += "📦 Lot Size: " + DoubleToString(lot, 2) + "\n";
+   warning_msg += "📝 Comment: " + (comment == "" ? "<i>ไม่มี (เปิดเอง)</i>" : comment) + "\n";
+   warning_msg += "━━━━━━━━━━━━━━━━━━━━\n\n";
+
+   warning_msg += "💡 <b>คำแนะนำ:</b>\n";
+   warning_msg += "1. กรุณาปิดออเดอร์นี้หากต้องการให้ระบบ Hydra คำนวณความเสี่ยงให้\n";
+   warning_msg += "2. รอรับสัญญาณและให้ EA เปิดออเดอร์อัตโนมัติเท่านั้น\n";
+   warning_msg += "3. ใช้คำสั่ง /pause หากต้องการหยุดระบบชั่วคราว\n\n";
+   warning_msg += "🛡️ <i>Hydra Risk Management System</i>";
+
+   // ส่งไปยัง Telegram ของลูกค้า
+   SendToClient(warning_msg);
+
+   // ส่งรายงานไปยัง Master (คุณ) ด้วย
+   string master_alert = "🚨 ลูกค้าเปิดออเดอร์เอง (Manual Trade)\n";
+   master_alert += "บัญชี: " + IntegerToString(accountInfo.Login()) + "\n";
+   master_alert += "Ticket: " + IntegerToString(ticket) + "\n";
+   master_alert += "Symbol: " + symbol + " | " + type_str + "\n";
+   master_alert += "Lot: " + DoubleToString(lot, 2);
+   SendToMaster(master_alert);
 }
 
 void SendDailyReport() {

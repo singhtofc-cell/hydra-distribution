@@ -26,17 +26,20 @@
     26|
     27|## 📊 Core Components
     28|
-    29|| Component | Files | LOC | Language |
-    30||-----------|-------|-----|----------|
-    31|| Signal Server (FastAPI) | 1 | 430 | Python |
-    32|| Telegram Bot | 1 | 380 | Python |
-    33|| Performance Tracker | 1 | 320 | Python |
-    34|| Report Scheduler | 1 | 320 | Python |
-    35|| Admin Dashboard | 1 | 480 | Python/Streamlit |
-    36|| Database Schema | 2 | 280 | SQL |
-    37|| HydraCopy EA | 1 | 370 | MQL5 |
-    38|| EA Utilities | 1 | 170 | MQL5 |
-    39|| **Total** | **19** | **~1,830** | |
+|| Component | Files | LOC | Language |
+||-----------|-------|-----|----------|
+|| Signal Server (FastAPI) | 1 | 430 | Python |
+|| Telegram Bot | 1 | 380 | Python |
+|| Performance Tracker | 1 | 320 | Python |
+|| Report Scheduler | 1 | 320 | Python |
+|| Signal Dispatcher | 1 | 200 | Python |
+|| Admin Dashboard | 2 | 602+264 | Python/Streamlit |
+|| Database Schema | 2 | 280 | SQL |
+|| HydraClient EA v3.10 | 1 | 615 | MQL5 |
+|| HydraMaster EA | 1 | 217 | MQL5 |
+|| HydraCopy EA | 1 | 450 | MQL5 |
+|| EA Utilities | 1 | 172 | MQL5 |
+|| **Total** | **146** | **~3,891** | |
     40|
     41|## 🏗️ สถาปัตยกรรมระบบ
     42|
