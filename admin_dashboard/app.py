@@ -266,6 +266,127 @@ elif page == "📡 Send Signal":
         if st.button("📡 Cancel All Pending", use_container_width=True, type="secondary"):
             st.warning("🚫 Cancel all pending — implement via /api/v1/signal/cancel/{id}")
 
+    # ========================================================================
+    # 🤖 AUTO SEND — ส่งสัญญาณอัตโนมัติทุก Symbol พร้อมกัน
+    # ========================================================================
+    st.markdown("---")
+    st.markdown("##### 🤖 Auto Trade All Symbols")
+    st.markdown("ส่งสัญญาณเทรด **BUY หรือ SELL อัตโนมัติไปยังทุก Symbol พร้อมกัน** โดยใช้ SL/TP/ความเสี่ยงเดียวกัน")
+
+    with st.expander("⚙️ ตั้งค่า Auto Trade Parameters", expanded=False):
+        auto_col1, auto_col2, auto_col3 = st.columns(3)
+        with auto_col1:
+            auto_direction = st.selectbox("Auto Direction", ["BUY", "SELL"], key="auto_dir")
+            auto_priority = st.selectbox("Auto Priority", ["NORMAL", "URGENT", "EMERGENCY"], key="auto_pri")
+        with auto_col2:
+            auto_entry_offset = st.number_input(
+                "Entry Offset (points from current)",
+                min_value=1, value=10, step=1,
+                help="จำนวน point ห่างจากราคาปัจจุบัน เช่น +10 point สำหรับ BUY"
+            )
+            auto_sl_offset = st.number_input(
+                "SL Offset (points from entry)",
+                min_value=1, value=30, step=1,
+                help="ระยะ SL จากราคาเข้า เช่น 30 points"
+            )
+        with auto_col3:
+            auto_tp_offset = st.number_input(
+                "TP Offset (points from entry)",
+                min_value=1, value=60, step=1,
+                help="ระยะ TP จากราคาเข้า เช่น 60 points"
+            )
+            auto_lot_mult = st.number_input("Lot Multiplier", 0.1, 10.0, 1.0, 0.1, key="auto_lot")
+
+        risk_auto_col1, risk_auto_col2, risk_auto_col3 = st.columns(3)
+        with risk_auto_col1:
+            auto_risk_pct = st.number_input("Risk %", 0.1, 5.0, 1.0, 0.1, key="auto_risk")
+        with risk_auto_col2:
+            auto_expiry = st.number_input("Expiry (min)", 1, 1440, 30, key="auto_exp")
+        with risk_auto_col3:
+            auto_source = st.selectbox("Source Strategy", ["SMC_GRID", "JUDAS_SWING", "ICT_SMC", "AUTO_TRADE"], key="auto_src")
+
+        # เลือก Symbol ที่จะ Auto Send
+        st.markdown("**📌 เลือก Symbol ที่ต้องการ Auto Trade**")
+        all_symbols = ["XAUUSD", "XAGUSD", "EURUSD", "GBPUSD", "USDJPY",
+                       "AUDUSD", "USDCAD", "NZDUSD", "EURCHF", "EURGBP",
+                       "GBPCAD", "AUDNZD", "CADJPY", "EURJPY", "USDCHF"]
+        selected_symbols = st.multiselect(
+            "Symbols to Auto Trade",
+            options=all_symbols,
+            default=["XAUUSD", "EURUSD", "GBPUSD", "USDJPY"],
+            key="auto_symbols"
+        )
+
+        auto_col = st.columns(4)
+        with auto_col[0]:
+            auto_confirm = st.checkbox("✅ ยืนยัน Auto Trade", key="auto_confirm",
+                                        help="ต้องติ๊กก่อนถึงจะส่งสัญญาณ Auto Trade ได้")
+        with auto_col[3]:
+            auto_btn = st.button("🚀 Auto Trade All Selected", type="primary",
+                                  use_container_width=True, disabled=not auto_confirm)
+
+    if auto_btn and auto_confirm:
+        if not selected_symbols:
+            st.error("❌ กรุณาเลือก Symbol อย่างน้อย 1 ตัว")
+        else:
+            results = []
+            with st.spinner(f"🔄 กำลังส่งสัญญาณ {auto_direction} ไปยัง {len(selected_symbols)} symbols..."):
+                progress = st.progress(0, "กำลังส่งสัญญาณ...")
+                for i, sym in enumerate(selected_symbols):
+                    # จำลองราคาปัจจุบัน (ใน production ควรดึงราคาจริง)
+                    base_prices = {
+                        "XAUUSD": 2350.50, "XAGUSD": 30.50, "EURUSD": 1.0850,
+                        "GBPUSD": 1.2750, "USDJPY": 150.50, "AUDUSD": 0.6600,
+                        "USDCAD": 1.3600, "NZDUSD": 0.6100, "EURCHF": 0.9400,
+                        "EURGBP": 0.8500, "GBPCAD": 1.7200, "AUDNZD": 1.0800,
+                        "CADJPY": 110.50, "EURJPY": 163.00, "USDCHF": 0.8800,
+                    }
+                    base_price = base_prices.get(sym, 1.0)
+                    entry = base_price + (auto_entry_offset * 0.0001 if auto_direction == "BUY" else -auto_entry_offset * 0.0001)
+                    if sym in ("XAUUSD", "XAGUSD"):
+                        entry = base_price + (auto_entry_offset * 0.01 if auto_direction == "BUY" else -auto_entry_offset * 0.01)
+                    sl = entry - (auto_sl_offset * 0.01 if auto_direction == "BUY" else -auto_sl_offset * 0.01) if sym in ("XAUUSD", "XAGUSD") else \
+                         entry - (auto_sl_offset * 0.0001 if auto_direction == "BUY" else -auto_sl_offset * 0.0001)
+                    tp = entry + (auto_tp_offset * 0.01 if auto_direction == "BUY" else -auto_tp_offset * 0.01) if sym in ("XAUUSD", "XAGUSD") else \
+                         entry + (auto_tp_offset * 0.0001 if auto_direction == "BUY" else -auto_tp_offset * 0.0001)
+
+                    sig = {
+                        "signal_type": auto_direction,
+                        "priority": auto_priority,
+                        "symbol": sym,
+                        "entry_price": round(entry, 5),
+                        "sl_price": round(sl, 5),
+                        "tp_prices": [round(tp, 5)],
+                        "lot_multiplier": auto_lot_mult,
+                        "risk_percent": auto_risk_pct,
+                        "expiry_minutes": int(auto_expiry),
+                        "source": auto_source,
+                        "comment": f"AUTO_{auto_direction}_{sym}"
+                    }
+                    success, result, msg = api.send_signal(sig)
+                    results.append((sym, success, msg))
+                    progress.progress((i + 1) / len(selected_symbols), f"ส่ง {sym}...")
+
+            progress.empty()
+            success_count = sum(1 for _, s, _ in results if s)
+            fail_count = len(results) - success_count
+
+            if success_count > 0:
+                st.success(f"✅ Auto Trade สำเร็จ! {success_count}/{len(results)} symbols สำเร็จ" +
+                          (f" ({fail_count} ล้มเหลว)" if fail_count > 0 else ""))
+                st.balloons()
+            else:
+                st.error(f"❌ Auto Trade ล้มเหลวทั้งหมด {fail_count} symbols")
+
+            with st.expander("📋 ผลลัพธ์ Auto Trade (คลิกเพื่อดู)", expanded=True):
+                rst = st.columns(2)
+                with rst[0]:
+                    for sym, ok, msg in results:
+                        emoji = "✅" if ok else "❌"
+                        st.markdown(f"{emoji} **{sym}**: {msg[:60]}")
+                with rst[1]:
+                    st.info("💡 ถ้า Signal Server offline — สัญญาณจะถูกบันทึกเมื่อ Server กลับมา")
+
 # ============================================================================
 # 👥 CLIENTS PAGE (with real CRUD)
 # ============================================================================
@@ -324,9 +445,9 @@ elif page == "👥 Clients":
         qcols = st.columns(min(4, len(filtered)))
         for i, client in enumerate(filtered[:4]):
             with qcols[i % 4]:
-                cid = client.get("client_id", "?")
-                cstatus = client.get("status", "ACTIVE")
-                st.markdown(f"**{cid}**  \n`{client.get('account_number', '?')}`")
+                cid = getattr(client, "client_id", "?")
+                cstatus = getattr(client, "status", "ACTIVE")
+                st.markdown(f"**{cid}**  \\n`{getattr(client, 'account_number', '?')}`")
                 if cstatus == "ACTIVE":
                     if st.button(f"⏸️ Pause {cid[:8]}", key=f"pause_{cid}"):
                         ok, msg = api.update_client_status(cid, "PAUSED")
