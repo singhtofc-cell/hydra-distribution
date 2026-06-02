@@ -1,501 +1,856 @@
-     1|<!DOCTYPE html>
-     2|<html lang="th">
-     3|<head>
-     4|<meta charset="UTF-8">
-     5|<meta name="viewport" content="width=device-width, initial-scale=1.0">
-     6|<title>🐙 Hydra Trading System — คู่มือติดตั้งและใช้งาน</title>
-     7|<style>
-     8|@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
-     9|
-    10|:root {
-    11|  --bg: #0e1117;
-    12|  --surface: #1a1d27;
-    13|  --border: #2a2d3a;
-    14|  --text: #e1e4ea;
-    15|  --text-muted: #888b98;
-    16|  --accent: #00d4aa;
-    17|  --accent-dim: rgba(0,212,170,0.08);
-    18|  --cyan: #22d3ee;
-    19|  --emerald: #34d399;
-    20|  --violet: #a78bfa;
-    21|  --amber: #fbbf24;
-    22|  --rose: #fb7185;
-    23|  --orange: #fb923c;
-    24|}
-    25|
-    26|* { margin: 0; padding: 0; box-sizing: border-box; }
-    27|
-    28|body {
-    29|  font-family: 'IBM Plex Sans Thai', sans-serif;
-    30|  background: var(--bg);
-    31|  color: var(--text);
-    32|  line-height: 1.7;
-    33|}
-    34|
-    35|/* Top Banner */
-    36|.banner {
-    37|  background: linear-gradient(135deg, #0a2a24 0%, #0e1117 100%);
-    38|  border-bottom: 1px solid var(--accent);
-    39|  padding: 2.5rem 2rem;
-    40|  text-align: center;
-    41|}
-    42|.banner h1 {
-    43|  font-size: 2.2rem;
-    44|  font-weight: 700;
-    45|  color: var(--accent);
-    46|  letter-spacing: -0.5px;
-    47|}
-    48|.banner p {
-    49|  color: var(--text-muted);
-    50|  margin-top: 0.5rem;
-    51|  font-size: 1.05rem;
-    52|}
-    53|.banner .version {
-    54|  display: inline-block;
-    55|  margin-top: 0.6rem;
-    56|  padding: 0.2rem 1rem;
-    57|  border-radius: 20px;
-    58|  background: var(--accent-dim);
-    59|  border: 1px solid var(--accent);
-    60|  color: var(--accent);
-    61|  font-size: 0.8rem;
-    62|  font-weight: 500;
-    63|}
-    64|
-    65|/* Container */
-    66|.container {
-    67|  max-width: 960px;
-    68|  margin: 0 auto;
-    69|  padding: 2rem 1.5rem 4rem;
-    70|}
-    71|
-    72|/* TOC */
-    73|.toc {
-    74|  background: var(--surface);
-    75|  border: 1px solid var(--border);
-    76|  border-radius: 12px;
-    77|  padding: 1.8rem 2rem;
-    78|  margin-bottom: 2.5rem;
-    79|}
-    80|.toc h2 {
-    81|  font-size: 1.1rem;
-    82|  color: var(--accent);
-    83|  margin-bottom: 1rem;
-    84|}
-    85|.toc ol {
-    86|  padding-left: 1.5rem;
-    87|}
-    88|.toc ol li {
-    89|  margin-bottom: 0.4rem;
-    90|  font-size: 0.95rem;
-    91|}
-    92|.toc ol li a {
-    93|  color: var(--text-muted);
-    94|  text-decoration: none;
-    95|  transition: color 0.2s;
-    96|}
-    97|.toc ol li a:hover { color: var(--accent); }
-    98|
-    99|/* Step Section */
-   100|.step {
-   101|  background: var(--surface);
-   102|  border: 1px solid var(--border);
-   103|  border-radius: 14px;
-   104|  padding: 2rem;
-   105|  margin-bottom: 2rem;
-   106|  position: relative;
-   107|  transition: border-color 0.3s;
-   108|}
-   109|.step:hover { border-color: var(--accent); }
-   110|
-   111|.step-number {
-   112|  position: absolute;
-   113|  top: -12px;
-   114|  left: 20px;
-   115|  background: var(--accent);
-   116|  color: #000;
-   117|  font-weight: 700;
-   118|  font-size: 0.75rem;
-   119|  padding: 0.15rem 0.8rem;
-   120|  border-radius: 20px;
-   121|  letter-spacing: 0.5px;
-   122|}
-   123|
-   124|.step h2 {
-   125|  font-size: 1.3rem;
-   126|  margin-bottom: 0.4rem;
-   127|  color: #fff;
-   128|}
-   129|.step .step-subtitle {
-   130|  color: var(--text-muted);
-   131|  font-size: 0.9rem;
-   132|  margin-bottom: 1.2rem;
-   133|}
-   134|.step h3 {
-   135|  font-size: 1.05rem;
-   136|  color: var(--accent);
-   137|  margin: 1.2rem 0 0.6rem;
-   138|}
-   139|.step p, .step li {
-   140|  font-size: 0.95rem;
-   141|  color: var(--text);
-   142|  margin-bottom: 0.5rem;
-   143|}
-   144|.step ul, .step ol {
-   145|  padding-left: 1.5rem;
-   146|  margin-bottom: 0.8rem;
-   147|}
-   148|.step li { margin-bottom: 0.3rem; }
-   149|
-   150|/* Important box */
-   151|.important {
-   152|  background: rgba(251, 191, 36, 0.08);
-   153|  border-left: 3px solid var(--amber);
-   154|  padding: 1rem 1.2rem;
-   155|  border-radius: 8px;
-   156|  margin: 1rem 0;
-   157|  font-size: 0.9rem;
-   158|}
-   159|.important strong { color: var(--amber); }
-   160|
-   161|.tip {
-   162|  background: rgba(0, 212, 170, 0.08);
-   163|  border-left: 3px solid var(--accent);
-   164|  padding: 1rem 1.2rem;
-   165|  border-radius: 8px;
-   166|  margin: 1rem 0;
-   167|  font-size: 0.9rem;
-   168|}
-   169|.tip strong { color: var(--accent); }
-   170|
-   171|.warning {
-   172|  background: rgba(251, 113, 133, 0.08);
-   173|  border-left: 3px solid var(--rose);
-   174|  padding: 1rem 1.2rem;
-   175|  border-radius: 8px;
-   176|  margin: 1rem 0;
-   177|  font-size: 0.9rem;
-   178|}
-   179|.warning strong { color: var(--rose); }
-   180|
-   181|/* Code */
-   182|code {
-   183|  font-family: 'JetBrains Mono', monospace;
-   184|  background: rgba(255,255,255,0.06);
-   185|  padding: 0.15rem 0.5rem;
-   186|  border-radius: 4px;
-   187|  font-size: 0.85rem;
-   188|  color: var(--cyan);
-   189|}
-   190|pre {
-   191|  background: #0a0d14;
-   192|  border: 1px solid var(--border);
-   193|  border-radius: 10px;
-   194|  padding: 1.2rem;
-   195|  overflow-x: auto;
-   196|  margin: 0.8rem 0;
-   197|}
-   198|pre code {
-   199|  background: none;
-   200|  padding: 0;
-   201|  font-size: 0.82rem;
-   202|  color: var(--text);
-   203|  line-height: 1.5;
-   204|}
-   205|
-   206|/* Image placeholder / frame */
-   207|.img-frame {
-   208|  background: #0a0d14;
-   209|  border: 1px solid var(--border);
-   210|  border-radius: 10px;
-   211|  overflow: hidden;
-   212|  margin: 1rem 0;
-   213|}
-   214|.img-frame img {
-   215|  width: 100%;
-   216|  display: block;
-   217|}
-   218|.img-caption {
-   219|  padding: 0.6rem 1rem;
-   220|  font-size: 0.82rem;
-   221|  color: var(--text-muted);
-   222|  text-align: center;
-   223|  border-top: 1px solid var(--border);
-   224|}
-   225|
-   226|/* Table */
-   227|table {
-   228|  width: 100%;
-   229|  border-collapse: collapse;
-   230|  margin: 1rem 0;
-   231|  font-size: 0.9rem;
-   232|}
-   233|th, td {
-   234|  border: 1px solid var(--border);
-   235|  padding: 0.6rem 1rem;
-   236|  text-align: left;
-   237|}
-   238|th {
-   239|  background: rgba(0,212,170,0.06);
-   240|  color: var(--accent);
-   241|  font-weight: 600;
-   242|}
-   243|td { color: var(--text); }
-   244|
-   245|/* Parameter Table */
-   246|.params-table td:first-child {
-   247|  font-family: 'JetBrains Mono', monospace;
-   248|  color: var(--cyan);
-   249|  font-size: 0.82rem;
-   250|  white-space: nowrap;
-   251|}
-   252|
-   253|/* Footer */
-   254|.footer {
-   255|  text-align: center;
-   256|  padding: 2rem;
-   257|  border-top: 1px solid var(--border);
-   258|  color: var(--text-muted);
-   259|  font-size: 0.8rem;
-   260|}
-   261|
-   262|/* Steps badge */
-   263|.badge {
-   264|  display: inline-block;
-   265|  padding: 0.15rem 0.6rem;
-   266|  border-radius: 12px;
-   267|  font-size: 0.7rem;
-   268|  font-weight: 600;
-   269|  margin-right: 0.4rem;
-   270|}
-   271|.badge-green { background: rgba(52,211,153,0.15); color: var(--emerald); }
-   272|.badge-yellow { background: rgba(251,191,36,0.15); color: var(--amber); }
-   273|.badge-blue { background: rgba(34,211,238,0.15); color: var(--cyan); }
-   274|
-   275|/* Checkbox list */
-   276|.checklist { list-style: none; padding-left: 0 !important; }
-   277|.checklist li::before {
-   278|  content: "☐ ";
-   279|  color: var(--text-muted);
-   280|  font-size: 1.1rem;
-   281|}
-   282|.checklist li.done::before { content: "✅ "; }
-   283|
-   284|/* Responsive */
-   285|@media (max-width: 640px) {
-   286|  .banner h1 { font-size: 1.5rem; }
-   287|  .step { padding: 1.5rem; }
-   288|  .step-number { font-size: 0.65rem; }
-   289|}
-   290|</style>
-   291|</head>
-   292|<body>
-   293|
-   294|<div class="banner">
-   295|  <h1>🐙 Hydra Trading System</h1>
-   296|  <p>คู่มือติดตั้งและใช้งาน สำหรับลูกค้า MT5 VPS + Telegram</p>
-   297|  <span class="version">v1.0.0 · มิถุนายน 2026</span>
-   298|</div>
-   299|
-   300|<div class="container">
-   301|
-   302|  <!-- ===== TOC ===== -->
-   303|  <div class="toc">
-   304|    <h2>📑 สารบัญ</h2>
-   305|    <ol>
-   306|      <li><a href="#p1">เตรียมความพร้อม (Prerequisites)</a></li>
-   307|      <li><a href="#p2">สร้าง Telegram Bot ผ่าน @BotFather</a></li>
-   308|      <li><a href="#p3">ตั้งค่า Hydra Signal Server</a></li>
-   309|      <li><a href="#p4">ลงทะเบียน Telegram Bot Token</a></li>
-   310|      <li><a href="#p5">ติดตั้ง HydraCopyEA บน MT5</a></li>
-   311|      <li><a href="#p6">ตั้งค่า Input Parameters</a></li>
-   312|      <li><a href="#p7">ลงทะเบียนบัญชีกับ Telegram Bot</a></li>
-   313|      <li><a href="#p8">ทดสอบการทำงาน</a></li>
-   314|      <li><a href="#p9">การรายงานและติดตามผล</a></li>
-   315|      <li><a href="#p10">การแก้ไขปัญหาเบื้องต้น</a></li>
-   316|      <li><a href="#appendix">ภาคผนวก: ค่า Parameter แยกตามประเภทบัญชี</a></li>
-   317|    </ol>
-   318|  </div>
-   319|
-   320|  <!-- ==================================================================== -->
-   321|  <!-- PART 1: PREREQUISITES -->
-   322|  <!-- ==================================================================== -->
-   323|  <div class="step" id="p1">
-   324|    <div class="step-number">PART 1</div>
-   325|    <h2>📋 เตรียมความพร้อม</h2>
-   326|    <p class="step-subtitle">ตรวจสอบให้แน่ใจว่าคุณมีสิ่งเหล่านี้พร้อมก่อนเริ่มต้น</p>
-   327|
-   328|    <h3>✅ สิ่งที่ต้องมี</h3>
-   329|    <ul class="checklist">
-   330|      <li class="done">บัญชี <strong>Exness</strong> (Standard USD หรือ Standard Cent USC)</li>
-   331|      <li class="done">MT5 (MetaTrader 5) ติดตั้งบน <strong>VPS</strong> หรือเครื่องของคุณ</li>
-   332|      <li class="done">บัญชี <strong>Telegram</strong> ที่ใช้งานอยู่</li>
-   333|      <li class="done">VPS ที่เปิดใช้งานตลอด 24/7 (แนะนำ: Windows Server VPS)</li>
-   334|      <li class="done">Internet connection ที่เสถียร</li>
-   335|    </ul>
-   336|
-   337|    <div class="tip">
-   338|      <strong>💡 แนะนำ:</strong> ถ้าคุณยังไม่มี VPS — คุณสามารถใช้ Windows VPS ราคาประหยัด (~$10-20/เดือน)
-   339|      จากผู้ให้บริการเช่น DigitalOcean, Vultr, หรือ Hostinger ที่มีโซน Singapore (Latency ต่ำสุดสำหรับ Exness)
-   340|    </div>
-   341|
-   342|    <h3>📌 ข้อมูลที่ต้องเตรียม</h3>
-   343|    <table>
-   344|      <tr><th>ข้อมูล</th><th>คำอธิบาย</th><th>ตัวอย่าง</th></tr>
-   345|      <tr><td>Telegram Chat ID</td><td>ID ที่ Bot จะส่งสัญญาณไปให้</td><td><code>123456789</code></td></tr>
-   346|      <tr><td>MT5 Account Number</td><td>เลขบัญชี MT5 ของคุณ</td><td><code>12345678</code></td></tr>
-   347|      <tr><td>Account Currency</td><td>USD หรือ USC</td><td><code>USD</code> หรือ <code>USC</code></td></tr>
-   348|      <tr><td>Lot Multiplier</td><td>ตัวคูณ Lot (USD=1.0, USC=100)</td><td><code>1.0</code> หรือ <code>100</code></td></tr>
-   349|    </table>
-   350|  </div>
-   351|
-   352|  <!-- ==================================================================== -->
-   353|  <!-- PART 2: CREATE TELEGRAM BOT -->
-   354|  <!-- ==================================================================== -->
-   355|  <div class="step" id="p2">
-   356|    <div class="step-number">PART 2</div>
-   357|    <h2>🤖 สร้าง Telegram Bot ผ่าน @BotFather</h2>
-   358|    <p class="step-subtitle">BotFather เป็นบอทของ Telegram ที่ใช้สร้างและจัดการบอทอื่นๆ</p>
-   359|
-   360|    <h3>ขั้นตอน</h3>
-   361|    <ol>
-   362|      <li>เปิด Telegram และค้นหา <code>@BotFather</code> หรือกดลิงก์นี้: <a href="https://t.me/botfather" target="_blank" style="color:var(--cyan)">t.me/botfather</a></li>
-   363|      <li>กด <strong>Start</strong> หรือพิมพ์ <code>/start</code></li>
-   364|      <li>พิมพ์ <code>/newbot</code> เพื่อสร้างบอทใหม่</li>
-   365|      <li>BotFather จะถามชื่อบอท — พิมพ์ชื่อ เช่น <code>Hydra Signal Bot</code></li>
-   366|      <li>จากนั้นจะถาม <strong>username</strong> — ต้องลงท้ายด้วย <code>bot</code> เช่น <code>YourHydraSignalBot</code></li>
-   367|      <li>BotFather จะส่ง <strong>BOT TOKEN</strong> มาให้ — <span style="color:var(--rose);font-weight:600;">เก็บ Token นี้ไว้ในที่ปลอดภัย!</span></li>
-   368|    </ol>
-   369|
-   370|    <div class="img-frame">
-   371|      <img src="images/02_botfather_create_bot.png" alt="BotFather Create Bot Screenshot" style="max-height:500px;object-fit:contain;object-position:top;background:#0a0d14;">
-   372|      <div class="img-caption">ภาพ: ตัวอย่างการสร้าง Bot ใหม่ผ่าน @BotFather — โปรดทำตามขั้นตอนในคู่มือ</div>
-   373|    </div>
-   374|
-   375|    <div class="important">
-   376|      <strong>⚠️ สำคัญ:</strong> Token ของคุณเป็นความลับสูงสุด! อย่าแชร์ให้ใครเด็ดขาด
-   377|      Token มีรูปแบบประมาณ: <code>1234567890:ABCdefGHIjklMNOpqrsTUVwxyz</code>
-   378|    </div>
-   379|
-   380|    <h3>ตั้งค่า Bot Commands</h3>
-   381|    <p>หลังจากได้ Token แล้ว พิมพ์คำสั่งต่อไปนี้ใน BotFather:</p>
-   382|    <pre><code>/setcommands</code></pre>
-   383|    <p>จากนั้นส่งข้อความนี้:</p>
-   384|    <pre><code>start - 🤖 เริ่มต้นใช้งาน
-   385|register - 📝 ลงทะเบียนบัญชี MT5
-   386|status - 📊 ดูสถานะปัจจุบัน
-   387|pause - ⏸️ หยุดรับสัญญาณชั่วคราว
-   388|resume - ▶️ เริ่มรับสัญญาณอีกครั้ง
-   389|report - 📈 ดูรายงานผลการเทรด</code></pre>
-   390|
-   391|    <div class="img-frame">
-   392|      <img src="images/01_telegram_botfather_docs.png" alt="BotFather Documentation" style="max-height:500px;object-fit:contain;object-position:top;background:#0a0d14;">
-   393|      <div class="img-caption">ภาพ: เอกสาร BotFather อย่างเป็นทางการจาก Telegram</div>
-   394|    </div>
-   395|  </div>
-   396|
-   397|  <!-- ==================================================================== -->
-   398|  <!-- PART 3: SETUP HYDRA SIGNAL SERVER -->
-   399|  <!-- ==================================================================== -->
-   400|  <div class="step" id="p3">
-   401|    <div class="step-number">PART 3</div>
-   402|    <h2>🖥️ ตั้งค่า Hydra Signal Server</h2>
-   403|    <p class="step-subtitle">เซิร์ฟเวอร์ที่รับสัญญาณจาก Master และกระจายไปยังลูกค้าผ่าน Telegram</p>
-   404|
-   405|    <h3>ตัวเลือกที่ 1: ใช้ Docker (แนะนำ)</h3>
-   406|    <pre><code># 1. Clone โปรเจค
-   407|git clone https://github.com/singhtofc-cell/Hydra-Trading-System.git
-   408|cd Hydra-Trading-System
-   409|
-   410|# 2. แก้ไขไฟล์ .env
-   411|cp .env.example .env
-   412|nano .env
-   413|# ใส่ HYDRA_TELEGRAM_BOT_TOKEN และ HYDRA_ADMIN_CHAT_ID</code></pre>
-   414|
-   415|    <p>แก้ไขไฟล์ <code>.env</code> ให้มีเนื้อหาดังนี้:</p>
-   416|    <pre><code>HYDRA_TELEGRAM_BOT_TOKEN=1234567890:ABCdefGHIjklMNOpqrsTUVwxyz
-   417|HYDRA_ADMIN_CHAT_ID=123456789
-   418|HYDRA_DATABASE_URL=postgresql://hydra:***@localhost:5432/hydra_trading
-   419|HYDRA_SERVER_PORT=8788</code></pre>
-   420|
-   421|    <pre><code># 3. รันด้วย Docker Compose
-   422|docker compose up -d
-   423|
-   424|# 4. ตรวจสอบว่าเซิร์ฟเวอร์ทำงาน
-   425|curl http://localhost:8788/health</code></pre>
-   426|
-   427|    <div class="tip">
-   428|      <strong>💡 ผลลัพธ์ที่ได้:</strong>
-   429|      <pre><code>{
-   430|  "status": "healthy",
-   431|  "version": "1.0.0",
-   432|  "uptime": "0h 0m 15s",
-   433|  "active_clients": 0,
-   434|  "total_signals_dispatched": 0
-   435|}</code></pre>
-   436|    </div>
-   437|
-   438|    <h3>ตัวเลือกที่ 2: รันด้วย Python โดยตรง</h3>
-   439|    <pre><code># 1. Clone โปรเจค
-   440|git clone https://github.com/singhtofc-cell/Hydra-Trading-System.git
-   441|cd Hydra-Trading-System
-   442|
-   443|# 2. ติดตั้ง dependencies
-   444|pip install -r requirements.txt
-   445|
-   446|# 3. ตั้งค่า Environment
-   447|export HYDRA_TELEGRAM_BOT_TOKEN="1234567890:ABC..."
-   448|export HYDRA_ADMIN_CHAT_ID="123456789"
-   449|
-   450|# 4. รัน Signal Server
-   451|python -m backend.signal_server</code></pre>
-   452|
-   453|    <div class="important">
-   454|      <strong>⚠️ หมายเหตุ:</strong> เซิร์ฟเวอร์ต้องรันตลอด 24/7 บนเครื่องที่เชื่อมต่ออินเทอร์เน็ตได้
-   455|      หากใช้ Docker Compose ระบบจะ restart อัตโนมัติเมื่อเซิร์ฟเวอร์ล่ม
-   456|    </div>
-   457|  </div>
-   458|
-   459|  <!-- ==================================================================== -->
-   460|  <!-- PART 4: REGISTER BOT TOKEN -->
-   461|  <!-- ==================================================================== -->
-   462|  <div class="step" id="p4">
-   463|    <div class="step-number">PART 4</div>
-   464|    <h2>🔑 ลงทะเบียน Telegram Bot Token</h2>
-   465|    <p class="step-subtitle">นำ Token ที่ได้จาก BotFather ไปตั้งค่าในระบบ</p>
-   466|
-   467|    <h3>ขั้นตอน</h3>
-   468|    <ol>
-   469|      <li>เปิดไฟล์ <code>.env</code> ในโปรเจค Hydra</li>
-   470|      <li>แทนที่ <code>YOUR_BOT_TOKEN_HERE</code> ด้วย Token จริง</li>
-   471|      <li>แทนที่ <code>YOUR_ADMIN_CHAT_ID_HERE</code> ด้วย Chat ID ของคุณ</li>
-   472|    </ol>
-   473|
-   474|    <h3>วิธีหา Chat ID ของตัวเอง</h3>
-   475|    <pre><code># วิธีที่ 1: ใช้ @userinfobot
-   476|# ค้นหา @userinfobot ใน Telegram → กด Start
-   477|# Bot จะส่ง Chat ID ของคุณกลับมา
-   478|
-   479|# วิธีที่ 2: ใช้ @getidsbot  
-   480|# ค้นหา @getidsbot → กด Start
-   481|# Bot จะแสดง ID, Username, และข้อมูลอื่นๆ</code></pre>
-   482|
-   483|    <div class="tip">
-   484|      <strong>💡 Tips:</strong> เมื่อตั้งค่าเสร็จแล้ว ให้ Restart Server หรือ Docker Container
-   485|      เพื่อให้ Token ใหม่มีผลทันที
-   486|    </div>
-   487|  </div>
-   488|
-   489|  <!-- ==================================================================== -->
-   490|  <!-- PART 5: INSTALL EA ON MT5 -->
-   491|  <!-- ==================================================================== -->
-   492|  <div class="step" id="p5">
-   493|    <div class="step-number">PART 5</div>
-   494|    <h2>📥 ติดตั้ง HydraCopyEA บน MT5</h2>
-   495|    <p class="step-subtitle">ติดตั้ง Expert Advisor ที่จะรับสัญญาณจาก Telegram และเทรดอัตโนมัติ</p>
-   496|
-   497|    <h3>ขั้นตอนการติดตั้ง</h3>
-   498|    <ol>
-   499|      <li>ดาวน์โหลดไฟล์ <code>HydraCopyEA.ex5</code> จาก Admin หรือ compile จาก source</li>
-   500|      <li>เปิด MT5 → ไปที่เมนู <strong>File → Open Data Folder</strong></li>
-   501|
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🐙 Hydra Trading System — คู่มือติดตั้งและใช้งาน</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0e1117;
+  --surface: #1a1d27;
+  --border: #2a2d3a;
+  --text: #e1e4ea;
+  --text-muted: #888b98;
+  --accent: #00d4aa;
+  --accent-dim: rgba(0,212,170,0.08);
+  --cyan: #22d3ee;
+  --emerald: #34d399;
+  --violet: #a78bfa;
+  --amber: #fbbf24;
+  --rose: #fb7185;
+  --orange: #fb923c;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'IBM Plex Sans Thai', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+}
+
+/* Top Banner */
+.banner {
+  background: linear-gradient(135deg, #0a2a24 0%, #0e1117 100%);
+  border-bottom: 1px solid var(--accent);
+  padding: 2.5rem 2rem;
+  text-align: center;
+}
+.banner h1 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: -0.5px;
+}
+.banner p {
+  color: var(--text-muted);
+  margin-top: 0.5rem;
+  font-size: 1.05rem;
+}
+.banner .version {
+  display: inline-block;
+  margin-top: 0.6rem;
+  padding: 0.2rem 1rem;
+  border-radius: 20px;
+  background: var(--accent-dim);
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+/* Container */
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+}
+
+/* TOC */
+.toc {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.8rem 2rem;
+  margin-bottom: 2.5rem;
+}
+.toc h2 {
+  font-size: 1.1rem;
+  color: var(--accent);
+  margin-bottom: 1rem;
+}
+.toc ol {
+  padding-left: 1.5rem;
+}
+.toc ol li {
+  margin-bottom: 0.4rem;
+  font-size: 0.95rem;
+}
+.toc ol li a {
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.toc ol li a:hover { color: var(--accent); }
+
+/* Step Section */
+.step {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  position: relative;
+  transition: border-color 0.3s;
+}
+.step:hover { border-color: var(--accent); }
+
+.step-number {
+  position: absolute;
+  top: -12px;
+  left: 20px;
+  background: var(--accent);
+  color: #000;
+  font-weight: 700;
+  font-size: 0.75rem;
+  padding: 0.15rem 0.8rem;
+  border-radius: 20px;
+  letter-spacing: 0.5px;
+}
+
+.step h2 {
+  font-size: 1.3rem;
+  margin-bottom: 0.4rem;
+  color: #fff;
+}
+.step .step-subtitle {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin-bottom: 1.2rem;
+}
+.step h3 {
+  font-size: 1.05rem;
+  color: var(--accent);
+  margin: 1.2rem 0 0.6rem;
+}
+.step p, .step li {
+  font-size: 0.95rem;
+  color: var(--text);
+  margin-bottom: 0.5rem;
+}
+.step ul, .step ol {
+  padding-left: 1.5rem;
+  margin-bottom: 0.8rem;
+}
+.step li { margin-bottom: 0.3rem; }
+
+/* Important box */
+.important {
+  background: rgba(251, 191, 36, 0.08);
+  border-left: 3px solid var(--amber);
+  padding: 1rem 1.2rem;
+  border-radius: 8px;
+  margin: 1rem 0;
+  font-size: 0.9rem;
+}
+.important strong { color: var(--amber); }
+
+.tip {
+  background: rgba(0, 212, 170, 0.08);
+  border-left: 3px solid var(--accent);
+  padding: 1rem 1.2rem;
+  border-radius: 8px;
+  margin: 1rem 0;
+  font-size: 0.9rem;
+}
+.tip strong { color: var(--accent); }
+
+.warning {
+  background: rgba(251, 113, 133, 0.08);
+  border-left: 3px solid var(--rose);
+  padding: 1rem 1.2rem;
+  border-radius: 8px;
+  margin: 1rem 0;
+  font-size: 0.9rem;
+}
+.warning strong { color: var(--rose); }
+
+/* Code */
+code {
+  font-family: 'JetBrains Mono', monospace;
+  background: rgba(255,255,255,0.06);
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  color: var(--cyan);
+}
+pre {
+  background: #0a0d14;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.2rem;
+  overflow-x: auto;
+  margin: 0.8rem 0;
+}
+pre code {
+  background: none;
+  padding: 0;
+  font-size: 0.82rem;
+  color: var(--text);
+  line-height: 1.5;
+}
+
+/* Image placeholder / frame */
+.img-frame {
+  background: #0a0d14;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 1rem 0;
+}
+.img-frame img {
+  width: 100%;
+  display: block;
+}
+.img-caption {
+  padding: 0.6rem 1rem;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  text-align: center;
+  border-top: 1px solid var(--border);
+}
+
+/* Table */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+  font-size: 0.9rem;
+}
+th, td {
+  border: 1px solid var(--border);
+  padding: 0.6rem 1rem;
+  text-align: left;
+}
+th {
+  background: rgba(0,212,170,0.06);
+  color: var(--accent);
+  font-weight: 600;
+}
+td { color: var(--text); }
+
+/* Parameter Table */
+.params-table td:first-child {
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--cyan);
+  font-size: 0.82rem;
+  white-space: nowrap;
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 2rem;
+  border-top: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+/* Steps badge */
+.badge {
+  display: inline-block;
+  padding: 0.15rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  margin-right: 0.4rem;
+}
+.badge-green { background: rgba(52,211,153,0.15); color: var(--emerald); }
+.badge-yellow { background: rgba(251,191,36,0.15); color: var(--amber); }
+.badge-blue { background: rgba(34,211,238,0.15); color: var(--cyan); }
+
+/* Checkbox list */
+.checklist { list-style: none; padding-left: 0 !important; }
+.checklist li::before {
+  content: "☐ ";
+  color: var(--text-muted);
+  font-size: 1.1rem;
+}
+.checklist li.done::before { content: "✅ "; }
+
+/* Responsive */
+@media (max-width: 640px) {
+  .banner h1 { font-size: 1.5rem; }
+  .step { padding: 1.5rem; }
+  .step-number { font-size: 0.65rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="banner">
+    <h1>🐙 Hydra Trading System</h1>
+  <p>คู่มือติดตั้งและใช้งาน สำหรับลูกค้า MT5 VPS + Telegram</p>
+  <span class="version">v1.0.0 · มิถุนายน 2026</span>
+</div>
+
+<div class="container">
+
+  <!-- ===== TOC ===== -->
+  <div class="toc">
+    <h2>📑 สารบัญ</h2>
+    <ol>
+      <li><a href="#p1">เตรียมความพร้อม (Prerequisites)</a></li>
+      <li><a href="#p2">สร้าง Telegram Bot ผ่าน @BotFather</a></li>
+      <li><a href="#p3">ตั้งค่า Hydra Signal Server</a></li>
+      <li><a href="#p4">ลงทะเบียน Telegram Bot Token</a></li>
+      <li><a href="#p5">ติดตั้ง HydraCopyEA บน MT5</a></li>
+      <li><a href="#p6">ตั้งค่า Input Parameters</a></li>
+      <li><a href="#p7">ลงทะเบียนบัญชีกับ Telegram Bot</a></li>
+      <li><a href="#p8">ทดสอบการทำงาน</a></li>
+      <li><a href="#p9">การรายงานและติดตามผล</a></li>
+      <li><a href="#p10">การแก้ไขปัญหาเบื้องต้น</a></li>
+      <li><a href="#appendix">ภาคผนวก: ค่า Parameter แยกตามประเภทบัญชี</a></li>
+    </ol>
+  </div>
+
+  <!-- ==================================================================== -->
+  <!-- PART 1: PREREQUISITES -->
+  <!-- ==================================================================== -->
+  <div class="step" id="p1">
+    <div class="step-number">PART 1</div>
+    <h2>📋 เตรียมความพร้อม</h2>
+    <p class="step-subtitle">ตรวจสอบให้แน่ใจว่าคุณมีสิ่งเหล่านี้พร้อมก่อนเริ่มต้น</p>
+
+    <h3>✅ สิ่งที่ต้องมี</h3>
+    <ul class="checklist">
+      <li class="done">บัญชี <strong>Exness</strong> (Standard USD หรือ Standard Cent USC)</li>
+      <li class="done">MT5 (MetaTrader 5) ติดตั้งบน <strong>VPS</strong> หรือเครื่องของคุณ</li>
+      <li class="done">บัญชี <strong>Telegram</strong> ที่ใช้งานอยู่</li>
+      <li class="done">VPS ที่เปิดใช้งานตลอด 24/7 (แนะนำ: Windows Server VPS)</li>
+      <li class="done">Internet connection ที่เสถียร</li>
+    </ul>
+
+    <div class="tip">
+      <strong>💡 แนะนำ:</strong> ถ้าคุณยังไม่มี VPS — คุณสามารถใช้ Windows VPS ราคาประหยัด (~$10-20/เดือน)
+      จากผู้ให้บริการเช่น DigitalOcean, Vultr, หรือ Hostinger ที่มีโซน Singapore (Latency ต่ำสุดสำหรับ Exness)
+    </div>
+
+    <h3>📌 ข้อมูลที่ต้องเตรียม</h3>
+    <table>
+      <tr><th>ข้อมูล</th><th>คำอธิบาย</th><th>ตัวอย่าง</th></tr>
+      <tr><td>Telegram Chat ID</td><td>ID ที่ Bot จะส่งสัญญาณไปให้</td><td><code>123456789</code></td></tr>
+      <tr><td>MT5 Account Number</td><td>เลขบัญชี MT5 ของคุณ</td><td><code>12345678</code></td></tr>
+      <tr><td>Account Currency</td><td>USD หรือ USC</td><td><code>USD</code> หรือ <code>USC</code></td></tr>
+      <tr><td>Lot Multiplier</td><td>ตัวคูณ Lot (USD=1.0, USC=100)</td><td><code>1.0</code> หรือ <code>100</code></td></tr>
+    </table>
+  </div>
+
+  <!-- ==================================================================== -->
+  <!-- PART 2: CREATE TELEGRAM BOT -->
+  <!-- ==================================================================== -->
+  <div class="step" id="p2">
+    <div class="step-number">PART 2</div>
+    <h2>🤖 สร้าง Telegram Bot ผ่าน @BotFather</h2>
+    <p class="step-subtitle">BotFather เป็นบอทของ Telegram ที่ใช้สร้างและจัดการบอทอื่นๆ</p>
+
+    <h3>ขั้นตอน</h3>
+    <ol>
+      <li>เปิด Telegram และค้นหา <code>@BotFather</code> หรือกดลิงก์นี้: <a href="https://t.me/botfather" target="_blank" style="color:var(--cyan)">t.me/botfather</a></li>
+      <li>กด <strong>Start</strong> หรือพิมพ์ <code>/start</code></li>
+      <li>พิมพ์ <code>/newbot</code> เพื่อสร้างบอทใหม่</li>
+      <li>BotFather จะถามชื่อบอท — พิมพ์ชื่อ เช่น <code>Hydra Signal Bot</code></li>
+      <li>จากนั้นจะถาม <strong>username</strong> — ต้องลงท้ายด้วย <code>bot</code> เช่น <code>YourHydraSignalBot</code></li>
+      <li>BotFather จะส่ง <strong>BOT TOKEN</strong> มาให้ — <span style="color:var(--rose);font-weight:600;">เก็บ Token นี้ไว้ในที่ปลอดภัย!</span></li>
+    </ol>
+
+    <div class="img-frame">
+      <img src="images/02_botfather_create_bot.png" alt="BotFather Create Bot Screenshot" style="max-height:500px;object-fit:contain;object-position:top;background:#0a0d14;">
+      <div class="img-caption">ภาพ: ตัวอย่างการสร้าง Bot ใหม่ผ่าน @BotFather — โปรดทำตามขั้นตอนในคู่มือ</div>
+    </div>
+
+    <div class="important">
+      <strong>⚠️ สำคัญ:</strong> Token ของคุณเป็นความลับสูงสุด! อย่าแชร์ให้ใครเด็ดขาด
+      Token มีรูปแบบประมาณ: <code>1234567890:ABCdefGHIjklMNOpqrsTUVwxyz</code>
+    </div>
+
+    <h3>ตั้งค่า Bot Commands</h3>
+    <p>หลังจากได้ Token แล้ว พิมพ์คำสั่งต่อไปนี้ใน BotFather:</p>
+    <pre><code>/setcommands</code></pre>
+    <p>จากนั้นส่งข้อความนี้:</p>
+    <pre><code>start - 🤖 เริ่มต้นใช้งาน
+register - 📝 ลงทะเบียนบัญชี MT5
+status - 📊 ดูสถานะปัจจุบัน
+pause - ⏸️ หยุดรับสัญญาณชั่วคราว
+resume - ▶️ เริ่มรับสัญญาณอีกครั้ง
+report - 📈 ดูรายงานผลการเทรด</code></pre>
+
+    <div class="img-frame">
+      <img src="images/01_telegram_botfather_docs.png" alt="BotFather Documentation" style="max-height:500px;object-fit:contain;object-position:top;background:#0a0d14;">
+      <div class="img-caption">ภาพ: เอกสาร BotFather อย่างเป็นทางการจาก Telegram</div>
+    </div>
+  </div>
+
+  <!-- ==================================================================== -->
+  <!-- PART 3: SETUP HYDRA SIGNAL SERVER -->
+  <!-- ==================================================================== -->
+  <div class="step" id="p3">
+    <div class="step-number">PART 3</div>
+    <h2>🖥️ ตั้งค่า Hydra Signal Server</h2>
+    <p class="step-subtitle">เซิร์ฟเวอร์ที่รับสัญญาณจาก Master และกระจายไปยังลูกค้าผ่าน Telegram</p>
+
+    <h3>ตัวเลือกที่ 1: ใช้ Docker (แนะนำ)</h3>
+    <pre><code># 1. Clone โปรเจค
+git clone https://github.com/singhtofc-cell/Hydra-Trading-System.git
+cd Hydra-Trading-System
+
+# 2. แก้ไขไฟล์ .env
+cp .env.example .env
+nano .env
+# ใส่ HYDRA_TELEGRAM_BOT_TOKEN และ HYDRA_ADMIN_CHAT_ID</code></pre>
+
+    <p>แก้ไขไฟล์ <code>.env</code> ให้มีเนื้อหาดังนี้:</p>
+    <pre><code>HYDRA_TELEGRAM_BOT_TOKEN=1234567890:ABCdefGHIjklMNOpqrsTUVwxyz
+HYDRA_ADMIN_CHAT_ID=123456789
+HYDRA_DATABASE_URL=postgresql://hydra:hydra_pass@localhost:5432/hydra_trading
+HYDRA_SERVER_PORT=8788</code></pre>
+
+    <pre><code># 3. รันด้วย Docker Compose
+docker compose up -d
+
+# 4. ตรวจสอบว่าเซิร์ฟเวอร์ทำงาน
+curl http://localhost:8788/health</code></pre>
+
+    <div class="tip">
+      <strong>💡 ผลลัพธ์ที่ได้:</strong>
+      <pre><code>{
+  "status": "healthy",
+  "version": "1.0.0",
+  "uptime": "0h 0m 15s",
+  "active_clients": 0,
+  "total_signals_dispatched": 0
+}</code></pre>
+    </div>
+
+    <h3>ตัวเลือกที่ 2: รันด้วย Python โดยตรง</h3>
+    <pre><code># 1. Clone โปรเจค
+git clone https://github.com/singhtofc-cell/Hydra-Trading-System.git
+cd Hydra-Trading-System
+
+# 2. ติดตั้ง dependencies
+pip install -r requirements.txt
+
+# 3. ตั้งค่า Environment
+export HYDRA_TELEGRAM_BOT_TOKEN="1234567890:ABC..."
+export HYDRA_ADMIN_CHAT_ID="123456789"
+
+# 4. รัน Signal Server
+python -m backend.signal_server</code></pre>
+
+    <div class="important">
+      <strong>⚠️ หมายเหตุ:</strong> เซิร์ฟเวอร์ต้องรันตลอด 24/7 บนเครื่องที่เชื่อมต่ออินเทอร์เน็ตได้
+      หากใช้ Docker Compose ระบบจะ restart อัตโนมัติเมื่อเซิร์ฟเวอร์ล่ม
+    </div>
+  </div>
+
+  <!-- ==================================================================== -->
+  <!-- PART 4: REGISTER BOT TOKEN -->
+  <!-- ==================================================================== -->
+  <div class="step" id="p4">
+    <div class="step-number">PART 4</div>
+    <h2>🔑 ลงทะเบียน Telegram Bot Token</h2>
+    <p class="step-subtitle">นำ Token ที่ได้จาก BotFather ไปตั้งค่าในระบบ</p>
+
+    <h3>ขั้นตอน</h3>
+    <ol>
+      <li>เปิดไฟล์ <code>.env</code> ในโปรเจค Hydra</li>
+      <li>แทนที่ <code>YOUR_BOT_TOKEN_HERE</code> ด้วย Token จริง</li>
+      <li>แทนที่ <code>YOUR_ADMIN_CHAT_ID_HERE</code> ด้วย Chat ID ของคุณ</li>
+    </ol>
+
+    <h3>วิธีหา Chat ID ของตัวเอง</h3>
+    <pre><code># วิธีที่ 1: ใช้ @userinfobot
+# ค้นหา @userinfobot ใน Telegram → กด Start
+# Bot จะส่ง Chat ID ของคุณกลับมา
+
+# วิธีที่ 2: ใช้ @getidsbot  
+# ค้นหา @getidsbot → กด Start
+# Bot จะแสดง ID, Username, และข้อมูลอื่นๆ</code></pre>
+
+    <div class="tip">
+      <strong>💡 Tips:</strong> เมื่อตั้งค่าเสร็จแล้ว ให้ Restart Server หรือ Docker Container
+      เพื่อให้ Token ใหม่มีผลทันที
+    </div>
+  </div>
+
+  <!-- ==================================================================== -->
+  <!-- PART 5: INSTALL EA ON MT5 -->
+  <!-- ==================================================================== -->
+  <div class="step" id="p5">
+    <div class="step-number">PART 5</div>
+    <h2>📥 ติดตั้ง HydraCopyEA บน MT5</h2>
+    <p class="step-subtitle">ติดตั้ง Expert Advisor ที่จะรับสัญญาณจาก Telegram และเทรดอัตโนมัติ</p>
+
+    <h3>ขั้นตอนการติดตั้ง</h3>
+    <ol>
+      <li>ดาวน์โหลดไฟล์ <code>HydraCopyEA.ex5</code> จาก Admin หรือ compile จาก source</li>
+      <li>เปิด MT5 → ไปที่เมนู <strong>File → Open Data Folder</strong></li>
+      <li>ไปที่โฟลเดอร์ <code>MQL5\Experts\</code></li>
+      <li>วางไฟล์ <code>HydraCopyEA.ex5</code> ในโฟลเดอร์นี้</li>
+      <li>ไปที่ <code>MQL5\Include\</code> — วางไฟล์ <code>HydraEA_Utils.mqh</code></li>
+      <li>สร้างโฟลเดอร์ <code>MQL5\Files\Hydra\</code></li>
+      <li>สร้างไฟล์ <code>bot_token.txt</code> ในโฟลเดอร์ <code>MQL5\Files\Hydra\</code></li>
+      <li>เขียน Token ลงใน <code>bot_token.txt</code> (บรรทัดเดียว)</li>
+      <li>Restart MT5 หรือกด Refresh ใน Navigator panel</li>
+      <li>ลาก EA จาก Navigator ไปวางบน Chart ที่ต้องการ</li>
+    </ol>
+
+    <div class="warning">
+      <strong>🚨 คำเตือน:</strong> หาก MT5 ไม่ยอมให้ลาก EA ลง Chart:
+      <ul>
+        <li>ไปที่ <strong>Tools → Options → Expert Advisors</strong></li>
+        <li>✔ ติ๊ก <strong>"Allow Automated Trading"</strong></li>
+        <li>✔ ติ๊ก <strong>"Allow DLL imports"</strong> (จำเป็นสำหรับ WebRequest)</li>
+        <li>✔ เพิ่ม <code>https://api.telegram.org</code> ใน <strong>"Allow WebRequest for listed URL"</strong></li>
+      </ul>
+    </div>
+
+    <h3>การสร้างไฟล์ bot_token.txt</h3>
+    <pre><code># เปิด Notepad บน VPS ของคุณ
+# พิมพ์ Token ของคุณ (บรรทัดเดียวเท่านั้น!)
+1234567890:ABCdefGHIjklMNOpqrsTUVwxyz
+
+# บันทึกเป็น: C:\Users\[YourUser]\AppData\Roaming\MetaQuotes\Terminal\[InstanceID]\MQL5\Files\Hydra\bot_token.txt</code></pre>
+
+    <div class="tip">
+      <strong>💡 หา Instance ID ของ MT5:</strong>
+      เปิด MT5 → File → Open Data Folder → จะเห็น path ที่มี Instance ID ต่อท้าย
+      เช่น <code>...\Terminal\A1B2C3D4E5F6\</code>
+    </div>
+  </div>
+
+  <!-- ==================================================================== -->
+  <!-- PART 6: INPUT PARAMETERS -->
+  <!-- ==================================================================== -->
+  <div class="step" id="p6">
+    <div class="step-number">PART 6</div>
+    <h2>⚙️ ตั้งค่า Input Parameters</h2>
+    <p class="step-subtitle">ปรับค่าต่างๆ ใน EA ให้เหมาะกับบัญชีของคุณ</p>
+
+    <p>เมื่อลาก EA ลง Chart แล้ว หน้าต่าง <strong>Expert Advisor Properties</strong> จะปรากฏขึ้น
+    ไปที่ Tab <strong>"Inputs"</strong> เพื่อตั้งค่าพารามิเตอร์:</p>
+
+    <h3>🔑 Main Settings</h3>
+    <table class="params-table">
+      <tr><th>Parameter</th><th>คำอธิบาย</th><th>ค่าแนะนำ</th></tr>
+      <tr><td>InpBotUsername</td><td>ชื่อ Telegram Bot</td><td><code>YourHydraSignalBot</code></td></tr>
+      <tr><td>InpMagicNumber</td><td>Magic number (ระบุ EA)</td><td><code>20260527</code></td></tr>
+      <tr><td>InpRiskPercent</td><td>% ความเสี่ยงต่อการเทรด</td><td><code>1.0</code> (หรือ 0.5 ถ้าต้องการ conservative)</td></tr>
+      <tr><td>InpLotMultiplier</td><td>ตัวคูณ Lot</td><td><code>1.0</code> (USD) หรือ <code>100</code> (USC)</td></tr>
+      <tr><td>InpMaxLotCap</td><td>Lot สูงสุด</td><td><code>5.0</code> (USD) หรือ <code>3.0</code> (USC)</td></tr>
+      <tr><td>InpAutoExecute</td><td>เทรดอัตโนมัติ</td><td><code>true</code></td></tr>
+      <tr><td>InpSlippage</td><td>Slippage ที่ยอมรับ (points)</td><td><code>30</code></td></tr>
+    </table>
+
+    <h3>🛡️ Risk Management</h3>
+    <table class="params-table">
+      <tr><th>Parameter</th><th>คำอธิบาย</th><th>ค่าแนะนำ</th></tr>
+      <tr><td>InpMaxDailyLoss</td><td>% ขาดทุนสูงสุดต่อวัน → หยุดเทรด</td><td><code>5.0</code></td></tr>
+      <tr><td>InpMaxDrawdown</td><td>% DD สูงสุด → ปิดออเดอร์ทั้งหมด</td><td><code>15.0</code></td></tr>
+      <tr><td>InpEnableNewsFilter</td><td>หยุดเทรดช่วงข่าวสำคัญ</td><td><code>true</code></td></tr>
+    </table>
+
+    <h3>📊 Reporting</h3>
+    <table class="params-table">
+      <tr><th>Parameter</th><th>คำอธิบาย</th><th>ค่าแนะนำ</th></tr>
+      <tr><td>InpSendReports</td><td>ส่งรายงานกลับ Master</td><td><code>true</code></td></tr>
+      <tr><td>InpReportInterval</td><td>ส่งรายงานทุก X นาที</td><td><code>60</code></td></tr>
+    </table>
+
+    <div class="important">
+      <strong>⚠️ ตั้งค่าแยกตามประเภทบัญชี:</strong><br>
+      <strong>USD Standard:</strong> LotMultiplier = 1.0, MaxLotCap = 5.0<br>
+      <strong>USC Cent:</strong> LotMultiplier = 100, MaxLotCap = 3.0<br>
+      ดูตารางเต็มใน <a href="#appendix" style="color:var(--cyan)">ภาคผนวก</a>
+    </div>
+  </div>
+
+  <!-- ==================================================================== -->
+  <!-- PART 7: REGISTER WITH BOT -->
+  <!-- ==================================================================== -->
+  <div class="step" id="p7">
+    <div class="step-number">PART 7</div>
+    <h2>📝 ลงทะเบียนบัญชีกับ Telegram Bot</h2>
+    <p class="step-subtitle">แจ้งให้ระบบรู้ว่าคุณเป็นลูกค้าและตั้งค่าการรับสัญญาณ</p>
+
+    <h3>ขั้นตอน</h3>
+    <ol>
+      <li>เปิด Telegram และค้นหา Bot ที่สร้างไว้ เช่น <code>@YourHydraSignalBot</code></li>
+      <li>กด <strong>Start</strong> หรือพิมพ์ <code>/start</code></li>
+      <li>ระบบจะแสดงเมนูต้อนรับพร้อมปุ่มต่างๆ</li>
+      <li>พิมพ์คำสั่งลงทะเบียน:</li>
+    </ol>
+
+    <pre><code>/register 12345678 USD 1.0</code></pre>
+
+    <p>โดยที่:</p>
+    <ul>
+      <li><code>12345678</code> = เลขบัญชี MT5 ของคุณ</li>
+      <li><code>USD</code> = ประเภทสกุลเงิน (USD หรือ USC)</li>
+      <li><code>1.0</code> = Lot multiplier (1.0 สำหรับ USD, 100 สำหรับ USC)</li>
+    </ul>
+
+    <div class="tip">
+      <strong>💡 ตัวอย่าง:</strong>
+      <pre><code>/register 87654321 USC 100</code></pre>
+      สำหรับบัญชี Cent USC — Master ส่ง 0.01 lot → คุณจะได้ 1.00 lot
+    </div>
+
+    <h3>เมนูคำสั่งทั้งหมด</h3>
+    <table>
+      <tr><th>คำสั่ง</th><th>การทำงาน</th></tr>
+      <tr><td><code>/start</code></td><td>แสดงเมนูต้อนรับ</td></tr>
+      <tr><td><code>/register [acc] [cur] [mult]</code></td><td>ลงทะเบียนบัญชี</td></tr>
+      <tr><td><code>/status</code></td><td>ดูสถานะการรับสัญญาณ</td></tr>
+      <tr><td><code>/pause</code></td><td>หยุดรับสัญญาณชั่วคราว</td></tr>
+      <tr><td><code>/resume</code></td><td>เริ่มรับสัญญาณอีกครั้ง</td></tr>
+      <tr><td><code>/report</code></td><td>ดูรายงานผลวันนี้</td></tr>
+      <tr><td><code>/report weekly</code></td><td>ดูรายงานผลประจำสัปดาห์</td></tr>
+    </table>
+  </div>
+
+  <!-- ==================================================================== -->
+  <!-- PART 8: TESTING -->
+  <!-- ==================================================================== -->
+  <div class="step" id="p8">
+    <div class="step-number">PART 8</div>
+    <h2>🧪 ทดสอบการทำงาน</h2>
+    <p class="step-subtitle">ตรวจสอบว่าระบบทำงานถูกต้องก่อนเริ่มเทรดจริง</p>
+
+    <h3>1. ตรวจสอบ Health Endpoint</h3>
+    <p>เปิด Terminal หรือ Browser แล้วไปที่:</p>
+    <pre><code>http://[YOUR_SERVER_IP]:8788/health</code></pre>
+
+    <h3>2. ส่ง Signal ทดสอบ</h3>
+    <pre><code>curl -X POST http://localhost:8788/api/v1/signal/send \
+  -H "Content-Type: application/json" \
+  -d '{
+    "signal_type": "BUY",
+    "symbol": "XAUUSD",
+    "entry_price": 2350.50,
+    "sl_price": 2330.00,
+    "tp_prices": [2370.00],
+    "lot_multiplier": 1.0,
+    "risk_percent": 1.0,
+    "source": "TEST"
+  }'</code></pre>
+
+    <h3>3. ตรวจสอบว่า EA รับสัญญาณได้</h3>
+    <p>เปิด MT5 → ไปที่ <strong>Expert Tab</strong> (ใน Terminal panel ด้านล่าง)
+    ควรเห็นข้อความ:</p>
+    <pre><code>🤖 Hydra Copy EA initialized
+📡 New signal received: sig_0001
+✅ Signal executed: sig_0001
+📍 Order placed: Ticket=12345678 Lot=0.01 SL=2330.00 TP1=2370.00</code></pre>
+
+    <h3>4. ตรวจสอบ Telegram</h3>
+    <p>เปิด Telegram Bot ของคุณ — ควรได้รับข้อความ:</p>
+    <pre><code>🟢 <b>HYDRA SIGNAL #sig_0001</b>
+🟢 <b>BUY</b> XAUUSD
+━━━━━━━━━━━━━━━━━━━━━━━
+📍 Entry: 2350.50
+🛡️ SL: 2330.00
+💰 TP1: 2370.00</code></pre>
+
+    <div class="warning">
+      <strong>🚨 ถ้าไม่ได้รับสัญญาณ:</strong>
+      <ul>
+        <li>ตรวจสอบ EA Journal Tab — มี error หรือไม่</li>
+        <li>ตรวจสอบว่า Bot Token ถูกต้อง</li>
+        <li>ตรวจสอบว่า MT5 เปิด Auto Trading อยู่</li>
+        <li>ตรวจสอบว่า WebRequest ไปยัง api.telegram.org ได้</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ==================================================================== -->
+  <!-- PART 9: MONITORING -->
+  <!-- ==================================================================== -->
+  <div class="step" id="p9">
+    <div class="step-number">PART 9</div>
+    <h2>📈 การรายงานและติดตามผล</h2>
+    <p class="step-subtitle">Hydra ส่งรายงานผลการเทรดให้คุณโดยอัตโนมัติ</p>
+
+    <h3>📊 กำหนดการรายงาน</h3>
+    <table>
+      <tr><th>ประเภท</th><th>เวลา</th><th>เนื้อหา</th></tr>
+      <tr><td>⏰ รายชั่วโมง</td><td>ทุกชั่วโมงที่ :00</td><td>P&L, Equity, จำนวนเทรดวันนี้</td></tr>
+      <tr><td>📅 รายวัน</td><td>23:55 UTC</td><td>P&L รายวัน, Win Rate, จำนวนเทรด</td></tr>
+      <tr><td>📋 รายสัปดาห์</td><td>วันอาทิตย์ 23:55 UTC</td><td>สรุปผลทั้งสัปดาห์</td></tr>
+      <tr><td>👑 Admin Summary</td><td>ทุกวัน 23:55 UTC</td><td>สรุปรวมลูกค้าทุกคน (เฉพาะ Admin)</td></tr>
+    </table>
+
+    <h3>📱 ดูรายงานผ่าน Telegram</h3>
+    <pre><code>/start      → ดูเมนูต้อนรับ
+/report     → ดูรายงานวันนี้
+/report weekly → ดูรายงานสัปดาห์
+/status     → ดูสถานะการรับสัญญาณ</code></pre>
+
+    <h3>🖥️ ดูผ่าน Admin Dashboard</h3>
+    <p>เปิดเบราว์เซอร์ไปที่:</p>
+    <pre><code>http://[YOUR_SERVER_IP]:8501</code></pre>
+    <p>Dashboard แสดง:</p>
+    <ul>
+      <li>📊 ภาพรวมระบบ — จำนวนลูกค้า, สัญญาณ, Health status</li>
+      <li>👥 รายชื่อลูกค้า — สถานะ, การตั้งค่า Lot</li>
+      <li>📡 ประวัติสัญญาณ — กรองตาม Symbol, Direction, Priority</li>
+      <li>📈 ประสิทธิภาพ — P&L รายวัน, Win Rate, Top Clients</li>
+      <li>⚙️ การตั้งค่าระบบ</li>
+    </ul>
+
+    <div class="tip">
+      <strong>💡 Tips:</strong> Admin Dashboard ใช้ Streamlit ซึ่งสามารถเปิดบน VPS
+      และใช้งานผ่านเบราว์เซอร์จากที่ไหนก็ได้
+    </div>
+  </div>
+
+  <!-- ==================================================================== -->
+  <!-- PART 10: TROUBLESHOOTING -->
+  <!-- ==================================================================== -->
+  <div class="step" id="p10">
+    <div class="step-number">PART 10</div>
+    <h2>🔧 การแก้ไขปัญหาเบื้องต้น</h2>
+    <p class="step-subtitle">ปัญหาที่พบบ่อยและวิธีการแก้ไข</p>
+
+    <h3>❌ EA ไม่ยอมติดบน Chart</h3>
+    <div class="important">
+      <strong>สาเหตุ:</strong> MT5 ปิด Auto Trading ไว้<br>
+      <strong>วิธีแก้:</strong> Tools → Options → Expert Advisors → ติ๊ก Allow Automated Trading
+    </div>
+
+    <h3>❌ EA ไม่ได้รับสัญญาณจาก Telegram</h3>
+    <div class="important">
+      <strong>สาเหตุ:</strong> WebRequest ถูกบล็อก<br>
+      <strong>วิธีแก้:</strong> Tools → Options → Expert Advisors → เพิ่ม <code>https://api.telegram.org</code> ใน Allow WebRequest
+    </div>
+
+    <h3>❌ ได้รับข้อความ "Bot token not found"</h3>
+    <div class="important">
+      <strong>สาเหตุ:</strong> ไม่พบไฟล์ bot_token.txt<br>
+      <strong>วิธีแก้:</strong> สร้างไฟล์ <code>...\MQL5\Files\Hydra\bot_token.txt</code> และใส่ Token
+    </div>
+
+    <h3>❌ Signal Server ไม่ยอมเริ่ม</h3>
+    <div class="important">
+      <strong>สาเหตุ:</strong> Port 8788 ถูกใช้งานแล้ว<br>
+      <strong>วิธีแก้:</strong> เปลี่ยน port ใน <code>.env</code> หรือ <code>config.yaml</code>:
+      <pre><code>HYDRA_SERVER_PORT=8789</code></pre>
+    </div>
+
+    <h3>❌ Docker Container เริ่มไม่ได้</h3>
+    <div class="important">
+      <strong>สาเหตุ:</strong> Port ขัดแย้งหรือ Token ไม่ถูกต้อง<br>
+      <strong>วิธีแก้:</strong>
+      <pre><code>docker compose logs hydra-api    # ดู Error log
+docker compose restart             # Restart ทั้งหมด</code></pre>
+    </div>
+
+    <h3>❌ สลิปเพจสูงเกินไป</h3>
+    <div class="important">
+      <strong>สาเหตุ:</strong> ราคาตลาดเคลื่อนที่เร็วกว่าที่ EA จะเทรดได้<br>
+      <strong>วิธีแก้:</strong> เพิ่ม InpSlippage ใน Input Parameters
+      <pre><code>InpSlippage = 50   # จากเดิม 30 points</code></pre>
+    </div>
+
+    <h3>❌ EA ส่งรายงานไม่กลับมา</h3>
+    <div class="important">
+      <strong>สาเหตุ:</strong> InpSendReports = false หรือ WebRequest ถูกบล็อก<br>
+      <strong>วิธีแก้:</strong> ตรวจสอบ Input → InpSendReports = true
+    </div>
+  </div>
+
+  <!-- ==================================================================== -->
+  <!-- APPENDIX -->
+  <!-- ==================================================================== -->
+  <div class="step" id="appendix">
+    <div class="step-number">APPENDIX</div>
+    <h2>📋 ภาคผนวก: ค่า Parameter แยกตามประเภทบัญชี</h2>
+    <p class="step-subtitle">ตารางเปรียบเทียบค่าที่แนะนำสำหรับบัญชีแต่ละประเภท</p>
+
+    <h3>💵 USD Standard Account</h3>
+    <table class="params-table">
+      <tr><th>Parameter</th><th>ค่า</th><th>เหตุผล</th></tr>
+      <tr><td>InpRiskPercent</td><td><code>1.0%</code></td><td>ความเสี่ยงมาตรฐาน 1% ต่อเทรด</td></tr>
+      <tr><td>InpLotMultiplier</td><td><code>1.0</code></td><td>Lot เท่ากับ Master โดยตรง</td></tr>
+      <tr><td>InpMaxLotCap</td><td><code>5.0</code></td><td>จำกัด Lot สูงสุดไม่เกิน 5.0</td></tr>
+      <tr><td>InpMaxDailyLoss</td><td><code>5.0%</code></td><td>หยุดเทรดเมื่อขาดทุนถึง 5%</td></tr>
+      <tr><td>InpMaxDrawdown</td><td><code>15.0%</code></td><td>ปิดออเดอร์ทั้งหมดเมื่อ DD 15%</td></tr>
+    </table>
+
+    <div class="tip">
+      <strong>ตัวอย่าง:</strong> Master ส่ง BUY EURUSD Lot 0.01
+      → คุณจะได้ BUY EURUSD Lot 0.01 ด้วย
+    </div>
+
+    <h3>💴 USC Cent Account</h3>
+    <table class="params-table">
+      <tr><th>Parameter</th><th>ค่า</th><th>เหตุผล</th></tr>
+      <tr><td>InpRiskPercent</td><td><code>1.0%</code></td><td>ความเสี่ยงมาตรฐาน 1% ต่อเทรด</td></tr>
+      <tr><td>InpLotMultiplier</td><td><code>100</code></td><td>เพื่อแปลง Cent → Standard lot</td></tr>
+      <tr><td>InpMaxLotCap</td><td><code>3.0</code></td><td>ป้องกัน Over-leverage (Cent อาจกระจายมาก)</td></tr>
+      <tr><td>InpMaxDailyLoss</td><td><code>5.0%</code></td><td>หยุดเทรดเมื่อขาดทุนถึง 5%</td></tr>
+      <tr><td>InpMaxDrawdown</td><td><code>15.0%</code></td><td>ปิดออเดอร์ทั้งหมดเมื่อ DD 15%</td></tr>
+    </table>
+
+    <div class="important">
+      <strong>ตัวอย่าง:</strong> Master ส่ง BUY EURUSD Lot 0.01
+      → คุณจะได้ BUY EURUSD Lot <strong>1.00</strong> (Cent lot)
+      <br><br>
+      <strong>สาเหตุที่คูณ 100:</strong> บัญชี Cent (USC) 1 lot = 1,000 หน่วย
+      ขณะที่ Standard (USD) 1 lot = 100,000 หน่วย
+      ดังนั้นต้องคูณ 100 เพื่อให้ได้มูลค่าเท่ากัน
+    </div>
+
+    <h3>⚙️ ตารางสรุปพารามิเตอร์ทั้งหมด</h3>
+    <table>
+      <tr><th>พารามิเตอร์</th><th>USD (Standard)</th><th>USC (Cent)</th></tr>
+      <tr><td>Lot Multiplier</td><td>1.0x</td><td>100x</td></tr>
+      <tr><td>Max Lot Cap</td><td>5.0</td><td>3.0</td></tr>
+      <tr><td>Risk %</td><td>1.0%</td><td>1.0%</td></tr>
+      <tr><td>Master 0.01 →</td><td>0.01 USD lot</td><td>1.00 USC lot</td></tr>
+      <tr><td>เหมาะสำหรับพอร์ต</td><td>$100 - $10,000+</td><td>5,000 - 500,000 USC</td></tr>
+    </table>
+  </div>
+
+  <!-- ==================================================================== -->
+  <!-- SUMMARY -->
+  <!-- ==================================================================== -->
+  <div style="background:linear-gradient(135deg,rgba(0,212,170,0.06),transparent);border:1px solid var(--accent);border-radius:14px;padding:2rem;margin-top:2rem;text-align:center;">
+    <h2 style="color:var(--accent);margin-bottom:0.8rem;">🎉 ติดตั้งเสร็จสมบูรณ์!</h2>
+    <p style="color:var(--text-muted);margin-bottom:1rem;">
+      คุณได้ติดตั้ง Hydra Trading System เรียบร้อยแล้ว<br>
+      ขณะนี้คุณพร้อมรับสัญญาณเทรดอัตโนมัติผ่าน Telegram
+    </p>
+    <p style="font-size:0.9rem;color:var(--text-muted);">
+      หากมีปัญหาหรือข้อสงสัยเพิ่มเติม — ติดต่อ Admin ผ่าน Telegram<br>
+      หรือดูเอกสารเพิ่มเติมได้ที่ <code>docs/</code> ในโปรเจค
+    </p>
+    <div style="margin-top:1rem;">
+      <span class="badge badge-green">🟢 รับสัญญาณ</span>
+      <span class="badge badge-blue">📊 รายงานอัตโนมัติ</span>
+      <span class="badge badge-yellow">🛡️ Risk Management</span>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  🐙 Hydra Trading System v1.0 · สงวนลิขสิทธิ์ 2026
+  <br>Build with 🧠 for Exness MT5 VPS Copy Trade
+</div>
+
+</body>
+</html>

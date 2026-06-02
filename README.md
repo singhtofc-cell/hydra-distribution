@@ -4,7 +4,7 @@
      4|[![MQL5](https://img.shields.io/badge/MQL5-1.00-FF6600?style=for-the-badge)]()
      5|[![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)]()
      6|
-     7|# 🐙 Hydra Trading System
+# 🐙 Hydra Trading System
      8|
      9|**Copy Trade / Signal Distribution System** — ระบบกระจายสัญญาณเทรดอัตโนมัติจาก Master System ไปยังบัญชี MT5 ของลูกค้าผ่าน Telegram Bot
     10|

@@ -4,7 +4,7 @@
      4|# คู่มือการติดตั้งและใช้งาน EA สำหรับลูกค้า
      5|# (Client installation and usage guide for Hydra Copy EA)
      6|
-     7|# 🐙 Hydra Copy Trade System
+# 🐙 Hydra Copy Trade System
      8|# ===========================
      9|#
     10|# ยินดีต้อนรับ! คุณกำลังใช้ระบบ Copy Trade ที่รับสัญญาณเทรดจาก Master
