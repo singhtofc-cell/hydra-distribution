@@ -13,23 +13,24 @@
 #property copyright "Hydra Trading System"
 #property version   "2.00"
 #property strict
-#include <Trade\Trade.mqh>
+#include "Trade.mqh"
+// Note: Trade functions are used in other modules; compile with MetaTrader 5 to provide <Trade\Trade.mqh>.
 
 //+------------------------------------------------------------------+
 //| INPUT PARAMETERS                                                 |
 //+------------------------------------------------------------------+
-input group "=== 🔗 Connection ==="
+// === 🔗 Connection ===
 input string   InpBotToken         = "YOUR_BOT_TOKEN";     // Telegram Bot Token
 input string   InpClientChatIDs    = "123456789,987654321"; // Client Chat IDs (comma-sep)
 input int      InpSignalExpiry     = 30;                   // Signal expiry (minutes)
 
-input group "=== ⚙️ Signal Settings ==="
+// === ⚙️ Signal Settings ===
 input double   InpDefaultRisk      = 1.0;                  // Default Risk % recommendation
 input double   InpMasterLotMult    = 1.0;                  // Master Lot Multiplier
 input string   InpMagicPrefix      = "HYDRA";              // Magic Number Prefix
 input bool     InpAutoSend         = true;                 // Auto-send signals
 
-input group "=== 🎯 Strategies ==="
+// === 🎯 Strategies ===
 input bool     InpEnableSMCGrid    = true;                 // Enable SMC Grid
 input bool     InpEnableJudasSwing = true;                 // Enable Judas Swing
 input int      InpMinConfluence    = 8;                    // Minimum Confluence Score
@@ -37,7 +38,7 @@ input int      InpMinConfluence    = 8;                    // Minimum Confluence
 //+------------------------------------------------------------------+
 //| GLOBAL VARIABLES                                                  |
 //+------------------------------------------------------------------+
-CTrade         trade;
+// Trade object is provided by MQL5 <Trade\Trade.mqh> at compile time (MT5). Omit local declaration here.
 string         client_chat_ids[];
 int            signal_counter = 0;
 

@@ -14,7 +14,6 @@
 #property copyright "Hydra Trading System"
 #property version   "3.10"
 #property description "ระบบ Copy Trade อัตโนมัติ พร้อมตรวจจับ Manual Trade และตั้งค่าผ่าน Telegram"
-#property strict
 #include <Trade\Trade.mqh>
 #include <Trade\SymbolInfo.mqh>
 #include <Trade\AccountInfo.mqh>
@@ -22,28 +21,28 @@
 //+------------------------------------------------------------------+
 //| INPUT PARAMETERS — Client sets these via Telegram                |
 //+------------------------------------------------------------------+
-input group "=== 🔑 Telegram Settings ==="
+// === 🔑 Telegram Settings ===
 input string   InpBotToken         = "";           // Bot Token from Master
 input long     InpMasterChatID     = 0;            // Master Chat ID
 input string   InpTelegramUsername = "";           // Client's Telegram username (no @)
 
-input group "=== 💰 Risk Management ==="
+// === 💰 Risk Management ===
 input double   InpRiskPerTrade     = 1.0;          // Risk % per trade (1.0 = 1%)
 input double   InpMaxDailyLoss     = 5.0;          // Max Daily Loss % (stops trading)
 input double   InpMaxDrawdown      = 15.0;         // Max Drawdown % (closes all)
 input double   InpMaxLotCap        = 10.0;         // Max lot allowed
 
-input group "=== 📊 Account Type ==="
+// === 📊 Account Type ===
 input bool     InpIsCentAccount    = false;        // true for Cent (USC)
 input double   InpCurrencyFactor   = 1.0;          // 1.0 (USD) or 100.0 (USC)
 
-input group "=== ⚙️ EA Settings ==="
+// === ⚙️ EA Settings ===
 input ulong    InpMagicNumber      = 20260527;     // Magic Number
 input int      InpSlippage         = 30;           // Slippage (points)
 input bool     InpAutoTrade        = true;         // Auto-execute trades
 input int      InpPollInterval     = 5;            // Poll interval (seconds)
 
-input group "=== 🛡️ Safety ==="
+// === 🛡️ Safety ===
 input bool     InpRequireConfirmation = true;      // Require confirmation before trade
 input double   InpMinMarginLevel   = 200.0;        // Min Margin Level (%)
 input bool     InpAllowManualTrades = false;       // อนุญาตให้เปิดเองโดยไม่แจ้งเตือน
@@ -156,9 +155,10 @@ void PollTelegramMessages() {
                 "/getUpdates?offset=" + IntegerToString(last_update_id + 1) +
                 "&timeout=1";
 
-   char post[], result[];
+   uchar post[];
+   uchar result[];
    string result_headers;
-   int res = WebRequest("GET", url, NULL, NULL, 5000, post, 0, result, result_headers);
+   int res = WebRequest("GET", url, "", "", 5000, post, 0, result, result_headers);
 
    if(res == 200) {
       string response = CharArrayToString(result);
@@ -196,7 +196,7 @@ void ParseTelegramResponse(const string &response) {
 void ProcessTelegramCommand(long chat_id, string text) {
    if(chat_id != StringToInteger(my_chat_id) && my_chat_id != "") return;
 
-   StringToLower(text);
+   HydraStringToLower(text);
    StringTrimLeft(text);
    StringTrimRight(text);
 
@@ -265,19 +265,21 @@ void SendToClient(string msg) {
    string url = "https://api.telegram.org/bot" + InpBotToken + "/sendMessage";
    string data = "chat_id=" + my_chat_id + "&text=" + UrlEncode(msg) +
                  "&parse_mode=HTML&disable_web_page_preview=true";
-   char post[], result[];
+   uchar post[];
+   uchar result[];
    string hdrs;
    StringToCharArray(data, post);
-   WebRequest("POST", url, NULL, NULL, 5000, post, 0, result, hdrs);
+   WebRequest("POST", url, "Content-Type: application/x-www-form-urlencoded", "", 5000, post, ArraySize(post), result, hdrs);
 }
 
 void SendToMaster(string msg) {
    string url = "https://api.telegram.org/bot" + InpBotToken + "/sendMessage";
    string data = "chat_id=" + IntegerToString(InpMasterChatID) + "&text=" + UrlEncode(msg);
-   char post[], result[];
+   uchar post[];
+   uchar result[];
    string hdrs;
    StringToCharArray(data, post);
-   WebRequest("POST", url, NULL, NULL, 5000, post, 0, result, hdrs);
+   WebRequest("POST", url, "Content-Type: application/x-www-form-urlencoded", "", 5000, post, ArraySize(post), result, hdrs);
 }
 
 string UrlEncode(string str) {
@@ -470,7 +472,7 @@ bool CheckRiskLimits() {
 
 void CheckDailyReset() {
    MqlDateTime dt, last_dt;
-   TimeCurrent(dt);
+   TimeToStruct(TimeCurrent(), dt);
    TimeToStruct(daily_reset_time, last_dt);
    if(dt.day != last_dt.day) {
       daily_start_equity = accountInfo.Equity();
@@ -606,7 +608,7 @@ void SendDailyReport() {
                 "🔄 " + (trading_enabled ? "✅ กำลังเทรด" : "⏸️ หยุดชั่วคราว"));
 }
 
-void StringToLower(string &str) {
+void HydraStringToLower(string &str) {
    int len = StringLen(str);
    for(int i = 0; i < len; i++) {
       ushort ch = StringGetCharacter(str, i);

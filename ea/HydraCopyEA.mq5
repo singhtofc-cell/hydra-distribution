@@ -14,14 +14,14 @@
 #property copyright "Hydra Trading System"
 #property version   "1.00"
 #property strict
-#include <Trade\Trade.mqh>
-#include <Trade\SymbolInfo.mqh>
-#include <Json.mqh>  // Requires MQL5 JSON library
+#include "Trade.mqh"
+#include "SymbolInfo.mqh"
+#include "Json.mqh"  // Minimal stub for JSON when library missing
 
 //+------------------------------------------------------------------+
 //| INPUT PARAMETERS                                                 |
 //+------------------------------------------------------------------+
-input group "=== 🔑 Main Settings ==="
+// === 🔑 Main Settings ===
 input string   InpBotUsername      = "HydraSignalBot";   // Telegram Bot name
 input ulong    InpMagicNumber      = 20260527;            // Magic Number
 input double   InpRiskPercent      = 1.0;                 // Risk % of portfolio
@@ -30,12 +30,12 @@ input double   InpMaxLotCap        = 5.0;                 // Maximum lot allowed
 input bool     InpAutoExecute      = true;                // Auto-execute trades
 input int      InpSlippage         = 30;                  // Acceptable slippage (points)
 
-input group "=== 🛡️ Risk Management ==="
+// === 🛡️ Risk Management ===
 input double   InpMaxDailyLoss     = 5.0;                 // Max Daily Loss % → stop trading
 input double   InpMaxDrawdown      = 15.0;                // Max DD % → close all
 input bool     InpEnableNewsFilter = true;                // Stop trading near news
 
-input group "=== 📊 Reporting ==="
+// === 📊 Reporting ===
 input bool     InpSendReports      = true;                // Send reports to master
 input int      InpReportInterval   = 60;                  // Report every X minutes
 
@@ -320,12 +320,14 @@ void FetchNewSignalsFromTelegram() {
                 "/getUpdates?offset=" + IntegerToString(last_update_id + 1) +
                 "&timeout=30";
 
-   string result;
-   char post[], result_headers[];
-   int res = WebRequest("GET", url, NULL, NULL, 5000, post, 0, result, result_headers);
+   uchar post[];
+   uchar result[];
+   string result_headers;
+   int res = WebRequest("GET", url, "", "", 5000, post, 0, result, result_headers);
 
    if (res == 200) {
-      ParseTelegramResponse(result);
+      string response = CharArrayToString(result);
+      ParseTelegramResponse(response);
    }
 }
 
@@ -413,12 +415,13 @@ void SendToMasterTelegram(const string &message) {
                       "&text=" + message +
                       "&parse_mode=HTML";
 
-   char post[], result_headers[];
-   string result;
+   uchar post[];
+   uchar result[];
+   string result_headers;
    StringToCharArray(post_data, post);
 
    int res = WebRequest("POST", url, "Content-Type: application/x-www-form-urlencoded",
-                        5000, post, result, result_headers);
+                        "", 5000, post, ArraySize(post), result, result_headers);
    if (res != 200) {
       Print("⚠️ Failed to send report: ", res);
    }

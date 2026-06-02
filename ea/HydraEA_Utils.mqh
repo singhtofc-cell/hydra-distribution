@@ -16,9 +16,9 @@
 //+------------------------------------------------------------------+
 string HydraStrTrim(const string &str) {
    string result = str;
-   while (StringLen(result) > 0 && StringGetChar(result, 0) <= 32)
+   while (StringLen(result) > 0 && StringGetCharacter(result, 0) <= 32)
       result = StringSubstr(result, 1);
-   while (StringLen(result) > 0 && StringGetChar(result, StringLen(result)-1) <= 32)
+   while (StringLen(result) > 0 && StringGetCharacter(result, StringLen(result)-1) <= 32)
       result = StringSubstr(result, 0, StringLen(result)-1);
    return result;
 }
@@ -138,15 +138,15 @@ string HydraFormatTradeConfirmation(
 ) {
    return StringFormat(
       "✅ TRADE CONFIRMED [HYDRA]\n"
-      "Signal: %%s\n"
-      "Account: %%I64d\n"
-      "Symbol: %%s\n"
-      "Type: %%s\n"
-      "Lot: %%.2f\n"
-      "Fill: %%.5f\n"
-      "SL: %%.5f\n"
-      "TP: %%.5f\n"
-      "Ticket: %%I64d",
+      "Signal: %s\n"
+      "Account: %I64d\n"
+      "Symbol: %s\n"
+      "Type: %s\n"
+      "Lot: %.2f\n"
+      "Fill: %.5f\n"
+      "SL: %.5f\n"
+      "TP: %.5f\n"
+      "Ticket: %I64d",
       signal_id, account, symbol, type, lot, fill_price, sl_price, tp_price, ticket
    );
 }
@@ -159,7 +159,7 @@ bool HydraIsNewsTime() {
    // In production: fetch economic calendar via API
 
    MqlDateTime dt;
-   TimeCurrent(dt);
+   TimeToStruct(TimeCurrent(), dt);
 
    // Skip weekends
    if (dt.day_of_week == 0 || dt.day_of_week == 6) return true;
